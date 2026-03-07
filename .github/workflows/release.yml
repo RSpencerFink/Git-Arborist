@@ -32,7 +32,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun install --frozen-lockfile
+      - run: bun install
 
       - run: bun scripts/version.ts
 
@@ -80,7 +80,7 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun install --frozen-lockfile
+      - run: bun install
 
       - run: bun scripts/version.ts
 
