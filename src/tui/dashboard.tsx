@@ -226,11 +226,9 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
       {/* Footer */}
       {!hasShellWrapper && (
         <Box marginTop={1}>
-          <Text color={theme.colors.warning}>
-            Shell integration required for switching. Add to .zshrc:{' '}
-          </Text>
+          <Text color={theme.colors.warning}>Shell integration required for switching. Run: </Text>
           <Text color={theme.colors.primary} bold>
-            eval "$(gw shell-init zsh)"
+            gw shell-setup
           </Text>
         </Box>
       )}

@@ -37,14 +37,11 @@ ${c.bold('UTILITIES')}
   ${c.command('gw plugin <sub>')}          Manage plugins (list|add|remove)
   ${c.command('gw completions <shell>')}   Generate shell completions
   ${c.command('gw shell-init <shell>')}    Print shell integration snippet
+  ${c.command('gw shell-setup')}           Auto-configure shell integration
 
 ${c.bold('OPTIONS')}
   ${c.dim('--help, -h')}                 Show this help message
   ${c.dim('--version, -v')}              Show version number
-
-${c.dim('Shell integration:')}
-  ${c.dim('  eval "$(gw shell-init zsh)"    # Add to .zshrc')}
-  ${c.dim('  eval "$(gw shell-init bash)"   # Add to .bashrc')}
 `);
 }
 

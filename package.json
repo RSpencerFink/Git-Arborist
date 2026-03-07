@@ -8,6 +8,7 @@
   },
   "files": [
     "src/",
+    "scripts/postinstall.ts",
     "package.json",
     "README.md",
     "LICENSE"
@@ -16,6 +17,7 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
+    "postinstall": "bun scripts/postinstall.ts",
     "prebuild": "bun scripts/version.ts",
     "dev": "bun run src/index.ts",
     "build": "bun build src/index.ts --compile --outfile gw",

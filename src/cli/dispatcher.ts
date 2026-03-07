@@ -59,6 +59,10 @@ const commands: Record<string, () => Promise<CommandHandler>> = {
     run: (await import('../commands/setup.ts')).setup,
     needsContext: true,
   }),
+  'shell-setup': async () => ({
+    run: (await import('../commands/shellSetup.ts')).shellSetup,
+    needsContext: false,
+  }),
   clone: async () => ({
     run: async (_ctx: GwContext, args: string[]) => {
       const { clone } = await import('../commands/clone.ts');
