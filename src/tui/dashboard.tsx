@@ -39,7 +39,6 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [error, setError] = useState<string | null>(null);
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
-  const [switchedTo, setSwitchedTo] = useState<string | null>(null);
   const { exit } = useApp();
 
   useEffect(() => {
@@ -105,16 +104,15 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
       setSelectedIndex((i) => Math.min(worktrees.length - 1, i + 1));
     }
     if (key.return && worktrees[selectedIndex]) {
-      const targetPath = worktrees[selectedIndex].wt.path;
       const cdFile = process.env.GW_CD_FILE;
       if (cdFile) {
-        writeFileSync(cdFile, targetPath);
+        writeFileSync(cdFile, worktrees[selectedIndex].wt.path);
       }
-      setSwitchedTo(targetPath);
+      exit();
     }
   });
 
-  const activePath = switchedTo ?? process.cwd();
+  const currentPath = process.cwd();
 
   return (
     <Box flexDirection="column" paddingX={1}>
@@ -211,7 +209,7 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
           key={state.wt.path}
           wt={state.wt}
           status={state.status}
-          isCurrent={state.wt.path === activePath || activePath.startsWith(`${state.wt.path}/`)}
+          isCurrent={state.wt.path === currentPath || currentPath.startsWith(`${state.wt.path}/`)}
           prInfo={state.prInfo}
           graphiteInfo={state.graphiteInfo}
           isSelected={index === selectedIndex}
@@ -221,7 +219,7 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
       {/* Footer */}
       <Box marginTop={1}>
         <Text color={theme.colors.muted}>
-          {'[↑/↓] navigate [enter] select [r] refresh [q] quit & cd'}
+          {'[↑/↓] navigate [enter] switch [r] refresh [q] quit'}
         </Text>
       </Box>
     </Box>
