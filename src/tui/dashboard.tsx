@@ -1,3 +1,6 @@
+import { writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { Box, Text, render, useApp, useInput } from 'ink';
 import Spinner from 'ink-spinner';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -36,6 +39,7 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [error, setError] = useState<string | null>(null);
+  const [switchTo, setSwitchTo] = useState<string | null>(null);
   const { exit } = useApp();
 
   const refresh = useCallback(async () => {
@@ -96,7 +100,18 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
     if (key.downArrow || input === 'j') {
       setSelectedIndex((i) => Math.min(worktrees.length - 1, i + 1));
     }
+    if (key.return && worktrees[selectedIndex]) {
+      setSwitchTo(worktrees[selectedIndex].wt.path);
+      exit();
+    }
   });
+
+  useEffect(() => {
+    if (switchTo) {
+      const cdFile = join(tmpdir(), `gw-dash-cd-${process.ppid}`);
+      writeFileSync(cdFile, switchTo);
+    }
+  }, [switchTo]);
 
   const currentPath = process.cwd();
 
@@ -193,7 +208,7 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
 
       {/* Footer */}
       <Box marginTop={1}>
-        <Text color={theme.colors.muted}>[j/k] navigate [r] refresh [q] quit</Text>
+        <Text color={theme.colors.muted}>[j/k] navigate [enter] switch [r] refresh [q] quit</Text>
       </Box>
     </Box>
   );
