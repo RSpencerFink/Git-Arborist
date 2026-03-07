@@ -12,6 +12,7 @@ import {
   listWorktrees,
 } from '../core/git.ts';
 import { exec } from '../utils/exec.ts';
+import { VERSION } from '../version.ts';
 import { theme } from './theme.ts';
 import { WorktreeRow } from './worktreeRow.tsx';
 
@@ -40,7 +41,12 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [error, setError] = useState<string | null>(null);
   const [switchTo, setSwitchTo] = useState<string | null>(null);
+  const [latestVersion, setLatestVersion] = useState<string | null>(null);
   const { exit } = useApp();
+
+  useEffect(() => {
+    checkForUpdate().then((v) => setLatestVersion(v));
+  }, []);
 
   const refresh = useCallback(async () => {
     try {
@@ -135,6 +141,17 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
         )}
       </Box>
 
+      {latestVersion && latestVersion !== VERSION && (
+        <Box marginBottom={1}>
+          <Text color={theme.colors.warning}>
+            Update available: {VERSION} → {latestVersion} — run{' '}
+          </Text>
+          <Text color={theme.colors.primary} bold>
+            bun add -g git-arborist@latest
+          </Text>
+        </Box>
+      )}
+
       {error && (
         <Box marginBottom={1}>
           <Text color={theme.colors.error}>Error: {error}</Text>
@@ -212,6 +229,17 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
       </Box>
     </Box>
   );
+}
+
+async function checkForUpdate(): Promise<string | null> {
+  try {
+    const resp = await fetch('https://registry.npmjs.org/git-arborist/latest');
+    if (!resp.ok) return null;
+    const data = (await resp.json()) as { version?: string };
+    return data.version ?? null;
+  } catch {
+    return null;
+  }
 }
 
 async function fetchPrInfo(
