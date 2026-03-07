@@ -111,7 +111,6 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
   });
 
   const cdFile = process.env.GW_CD_FILE;
-  const hasShellWrapper = Boolean(cdFile);
 
   useEffect(() => {
     if (switchTo && cdFile) {
@@ -224,18 +223,8 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
       ))}
 
       {/* Footer */}
-      {!hasShellWrapper && (
-        <Box marginTop={1}>
-          <Text color={theme.colors.warning}>Shell integration required for switching. Run: </Text>
-          <Text color={theme.colors.primary} bold>
-            gw shell-setup
-          </Text>
-        </Box>
-      )}
-      <Box marginTop={hasShellWrapper ? 1 : 0}>
-        <Text color={theme.colors.muted}>
-          [↑/↓] navigate{hasShellWrapper ? ' [enter] switch' : ''} [r] refresh [q] quit
-        </Text>
+      <Box marginTop={1}>
+        <Text color={theme.colors.muted}>[↑/↓] navigate [enter] switch [r] refresh [q] quit</Text>
       </Box>
     </Box>
   );

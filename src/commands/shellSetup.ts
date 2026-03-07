@@ -28,26 +28,74 @@ function detectShell(): string {
   return 'zsh';
 }
 
-export async function shellSetup(_ctx: GwContext, _args: string[]): Promise<void> {
+function getShellConfig() {
   const shell = detectShell();
   const config = SHELL_CONFIGS[shell];
+  if (!config) return null;
+  return { shell, ...config };
+}
 
-  if (!config) {
-    log.error(`Unsupported shell: ${shell}`);
-    return;
-  }
+export function isShellIntegrationConfigured(): boolean {
+  const config = getShellConfig();
+  if (!config) return false;
+  const rcPath = join(homedir(), config.rc);
+  if (!existsSync(rcPath)) return false;
+  return readFileSync(rcPath, 'utf-8').includes('gw shell-init');
+}
+
+export function runShellSetup(): boolean {
+  const config = getShellConfig();
+  if (!config) return false;
 
   const rcPath = join(homedir(), config.rc);
 
   if (existsSync(rcPath)) {
     const contents = readFileSync(rcPath, 'utf-8');
-    if (contents.includes('gw shell-init')) {
-      log.success(`Shell integration already configured in ${c.dim(rcPath)}`);
-      return;
-    }
+    if (contents.includes('gw shell-init')) return true;
   }
 
-  appendFileSync(rcPath, `\n# gw shell integration\n${config.line}\n`);
-  log.success(`Added shell integration to ${c.dim(rcPath)}`);
-  log.info(`Restart your shell or run: ${c.cyan(`source ~/${config.rc}`)}`);
+  try {
+    appendFileSync(rcPath, `\n# gw shell integration\n${config.line}\n`);
+    log.success(`Added shell integration to ${c.dim(rcPath)}`);
+    log.info(`Restart your shell or run: ${c.cyan(`source ~/${config.rc}`)}`);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function ensureShellIntegration(): Promise<void> {
+  if (isShellIntegrationConfigured()) return;
+
+  const { confirm, isCancel } = await import('@clack/prompts');
+  const shouldSetup = await confirm({
+    message: 'Shell integration is required for this command. Set it up now?',
+  });
+
+  if (isCancel(shouldSetup) || !shouldSetup) {
+    log.dim('You can set it up later with: gw shell-setup');
+    process.exit(0);
+  }
+
+  if (!runShellSetup()) {
+    log.error('Failed to configure shell integration.');
+    process.exit(1);
+  }
+
+  log.info('');
+  log.info(c.yellow('Please restart your shell, then re-run your command.'));
+  process.exit(0);
+}
+
+export async function shellSetup(_ctx: GwContext, _args: string[]): Promise<void> {
+  if (isShellIntegrationConfigured()) {
+    const config = getShellConfig();
+    const rcPath = config ? join(homedir(), config.rc) : '~/.zshrc';
+    log.success(`Shell integration already configured in ${c.dim(rcPath)}`);
+    return;
+  }
+
+  if (!runShellSetup()) {
+    log.error('Failed to configure shell integration.');
+  }
 }
