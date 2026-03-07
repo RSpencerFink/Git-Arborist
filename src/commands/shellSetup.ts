@@ -64,9 +64,7 @@ export function runShellSetup(): boolean {
   }
 }
 
-export async function ensureShellIntegration(): Promise<void> {
-  if (isShellIntegrationConfigured()) return;
-
+async function promptAndSetup(): Promise<void> {
   const { confirm, isCancel } = await import('@clack/prompts');
   const shouldSetup = await confirm({
     message: 'Shell integration is required for this command. Set it up now?',
@@ -83,8 +81,29 @@ export async function ensureShellIntegration(): Promise<void> {
   }
 
   log.info('');
-  log.info(c.yellow('Please restart your shell, then re-run your command.'));
+  log.info(c.yellow('Restart your shell, then re-run your command.'));
   process.exit(0);
+}
+
+/** For go/main: checks rc file, prompts if missing. */
+export async function ensureShellIntegration(): Promise<void> {
+  if (isShellIntegrationConfigured()) return;
+  await promptAndSetup();
+}
+
+/** For dash: checks GW_CD_FILE env var to confirm wrapper is active. */
+export async function ensureShellIntegrationActive(): Promise<void> {
+  if (process.env.GW_CD_FILE) return;
+
+  if (isShellIntegrationConfigured()) {
+    const config = getShellConfig();
+    const rc = config ? `~/${config.rc}` : 'your shell config';
+    log.warn('Shell integration is configured but not active in this session.');
+    log.info(`Run: ${c.cyan(`source ${rc}`)} or restart your shell.`);
+    process.exit(0);
+  }
+
+  await promptAndSetup();
 }
 
 export async function shellSetup(_ctx: GwContext, _args: string[]): Promise<void> {
