@@ -23,9 +23,9 @@ curl -fsSL https://raw.githubusercontent.com/gw-cli/gw/main/install.sh | bash
 ### npm / bun
 
 ```bash
-bun add -g gwx       # requires Bun runtime
+bun add -g git-arborist       # requires Bun runtime
 # or
-npm i -g gwx         # also requires Bun installed
+npm i -g git-arborist         # also requires Bun installed
 ```
 
 ### GitHub Releases

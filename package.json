@@ -1,5 +1,5 @@
 {
-  "name": "gwx",
+  "name": "git-arborist",
   "version": "0.1.0",
   "description": "Git Worktrees, Finally Simple",
   "type": "module",
