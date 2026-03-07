@@ -38,7 +38,6 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [error, setError] = useState<string | null>(null);
-  const [switchTo, setSwitchTo] = useState<string | null>(null);
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
   const { exit } = useApp();
 
@@ -105,18 +104,13 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
       setSelectedIndex((i) => Math.min(worktrees.length - 1, i + 1));
     }
     if (key.return && worktrees[selectedIndex]) {
-      setSwitchTo(worktrees[selectedIndex].wt.path);
+      const cdFile = process.env.GW_CD_FILE;
+      if (cdFile) {
+        writeFileSync(cdFile, worktrees[selectedIndex].wt.path);
+      }
       exit();
     }
   });
-
-  const cdFile = process.env.GW_CD_FILE;
-
-  useEffect(() => {
-    if (switchTo && cdFile) {
-      writeFileSync(cdFile, switchTo);
-    }
-  }, [switchTo, cdFile]);
 
   const currentPath = process.cwd();
 
