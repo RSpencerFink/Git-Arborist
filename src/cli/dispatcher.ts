@@ -1,9 +1,9 @@
-import type { GwContext } from '../core/context.ts';
-import { createContext } from '../core/context.ts';
-import { log } from '../utils/logger.ts';
-import { generateCompletions } from './completions.ts';
-import { printHelp, printVersion } from './help.ts';
-import { generateShellInit } from './shellInit.ts';
+import type { GwContext } from "../core/context.ts";
+import { createContext } from "../core/context.ts";
+import { log } from "../utils/logger.ts";
+import { generateCompletions } from "./completions.ts";
+import { printHelp, printVersion } from "./help.ts";
+import { generateShellInit } from "./shellInit.ts";
 
 interface CommandHandler {
   run: (ctx: GwContext, args: string[]) => Promise<void>;
@@ -12,74 +12,78 @@ interface CommandHandler {
 
 const commands: Record<string, () => Promise<CommandHandler>> = {
   add: async () => ({
-    run: (await import('../commands/add.ts')).add,
+    run: (await import("../commands/add.ts")).add,
     needsContext: true,
   }),
   rm: async () => ({
-    run: (await import('../commands/rm.ts')).rm,
+    run: (await import("../commands/rm.ts")).rm,
     needsContext: true,
   }),
   go: async () => ({
-    run: (await import('../commands/go.ts')).go,
+    run: (await import("../commands/go.ts")).go,
     needsContext: true,
   }),
   ls: async () => ({
-    run: (await import('../commands/ls.ts')).ls,
+    run: (await import("../commands/ls.ts")).ls,
     needsContext: true,
   }),
   main: async () => ({
-    run: (await import('../commands/main.ts')).main,
+    run: (await import("../commands/main.ts")).main,
     needsContext: true,
   }),
   status: async () => ({
-    run: (await import('../commands/status.ts')).status,
+    run: (await import("../commands/status.ts")).status,
+    needsContext: true,
+  }),
+  dash: async () => ({
+    run: (await import("../commands/dash.ts")).dash,
     needsContext: true,
   }),
   prune: async () => ({
-    run: (await import('../commands/prune.ts')).prune,
+    run: (await import("../commands/prune.ts")).prune,
     needsContext: true,
   }),
   gc: async () => ({
-    run: (await import('../commands/gc.ts')).gc,
+    run: (await import("../commands/gc.ts")).gc,
     needsContext: true,
   }),
   clean: async () => ({
-    run: (await import('../commands/clean.ts')).clean,
+    run: (await import("../commands/clean.ts")).clean,
     needsContext: true,
   }),
   init: async () => ({
-    run: (await import('../commands/init.ts')).init,
+    run: (await import("../commands/init.ts")).init,
     needsContext: true,
   }),
   setup: async () => ({
-    run: (await import('../commands/setup.ts')).setup,
+    run: (await import("../commands/setup.ts")).setup,
     needsContext: true,
   }),
   clone: async () => ({
     run: async (_ctx: GwContext, args: string[]) => {
-      const { clone } = await import('../commands/clone.ts');
+      const { clone } = await import("../commands/clone.ts");
       await clone(null, args);
     },
     needsContext: false,
   }),
   run: async () => ({
-    run: (await import('../commands/run.ts')).run,
+    run: (await import("../commands/run.ts")).run,
     needsContext: true,
   }),
   open: async () => ({
-    run: (await import('../commands/open.ts')).open,
+    run: (await import("../commands/open.ts")).open,
     needsContext: true,
   }),
   tmux: async () => ({
-    run: (await import('../commands/tmux.ts')).tmux,
+    run: (await import("../commands/tmux.ts")).tmux,
     needsContext: true,
   }),
   config: async () => ({
-    run: (await import('../commands/config.ts')).config,
+    run: (await import("../commands/config.ts")).config,
     needsContext: true,
   }),
   plugin: async () => ({
-    run: (await import('../commands/plugin.ts')).plugin,
+    run: (await import("../commands/plugin.ts")).plugin,
     needsContext: true,
   }),
 };
@@ -90,30 +94,34 @@ export async function dispatch(argv: string[]): Promise<void> {
   const commandArgs = args.slice(1);
 
   // Handle top-level flags
-  if (!command || command === '--help' || command === '-h') {
+  if (!command || command === "--help" || command === "-h") {
     printHelp();
     return;
   }
 
-  if (command === '--version' || command === '-v') {
+  if (command === "--version" || command === "-v") {
     printVersion();
     return;
   }
 
   // Handle completions and shell-init without context
-  if (command === 'completions') {
+  if (command === "completions") {
     const shell = commandArgs[0];
     if (!shell) {
-      throw new Error('Shell argument required. Usage: gw completions <zsh|bash|fish>');
+      throw new Error(
+        "Shell argument required. Usage: gw completions <zsh|bash|fish>",
+      );
     }
     console.log(generateCompletions(shell));
     return;
   }
 
-  if (command === 'shell-init') {
+  if (command === "shell-init") {
     const shell = commandArgs[0];
     if (!shell) {
-      throw new Error('Shell argument required. Usage: gw shell-init <zsh|bash|fish>');
+      throw new Error(
+        "Shell argument required. Usage: gw shell-init <zsh|bash|fish>",
+      );
     }
     console.log(generateShellInit(shell));
     return;
@@ -123,7 +131,7 @@ export async function dispatch(argv: string[]): Promise<void> {
   const loader = commands[command];
   if (!loader) {
     log.error(`Unknown command: ${command}`);
-    log.dim('Run gw --help to see available commands.');
+    log.dim("Run gw --help to see available commands.");
     process.exit(1);
   }
 
@@ -138,7 +146,7 @@ export async function dispatch(argv: string[]): Promise<void> {
     ctx = {
       gitRoot: process.cwd(),
       config: {
-        worktree_path: '../.worktrees/{{ branch | sanitize }}',
+        worktree_path: "../.worktrees/{{ branch | sanitize }}",
         setup: { copy: [], symlink: [], run: [] },
         plugins: {},
       },
