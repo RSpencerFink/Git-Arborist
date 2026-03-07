@@ -18,6 +18,12 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      - name: Configure git for tests
+        run: |
+          git config --global user.email "ci@test.com"
+          git config --global user.name "CI"
+          git config --global init.defaultBranch main
+
       - run: bun run lint
 
       - run: bun test
