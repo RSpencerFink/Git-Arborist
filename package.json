@@ -6,20 +6,37 @@
   "bin": {
     "gw": "./src/index.ts"
   },
+  "files": [
+    "src/",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "bun": ">=1.0.0"
+  },
   "scripts": {
+    "prebuild": "bun scripts/version.ts",
     "dev": "bun run src/index.ts",
     "build": "bun build src/index.ts --compile --outfile gw",
+    "build:all": "bun scripts/build.ts",
     "test": "bun test",
     "lint": "bunx biome check src/",
-    "format": "bunx biome format --write src/"
+    "format": "bunx biome format --write src/",
+    "release": "bun scripts/release.ts"
   },
   "dependencies": {
     "@clack/prompts": "^0.9.1",
-    "picocolors": "^1.1.1"
+    "ink": "^6.8.0",
+    "ink-spinner": "^5.0.0",
+    "picocolors": "^1.1.1",
+    "react": "^19.2.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/bun": "^1.2.4",
+    "@types/react": "^19.2.14",
+    "react-devtools-core": "^7.0.1",
     "typescript": "^5.7.3"
   },
   "license": "MIT"

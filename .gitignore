@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.tgz
+*.sha256
+.DS_Store
+
+# Compiled binary
+/gw
+*.bun-build
+
+# Auto-generated
+src/version.ts
