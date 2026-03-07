@@ -25,13 +25,14 @@ export function WorktreeRow({
   graphiteInfo,
   isSelected,
 }: WorktreeRowProps) {
-  const marker = isSelected ? '▸' : isCurrent ? '*' : ' ';
+  const selector = isSelected ? '▸' : ' ';
+  const branchName = wt.isDetached ? `(${wt.head})` : wt.branch;
 
   return (
     <Box flexDirection="row" paddingLeft={1}>
       <Box width={3}>
         <Text color={isSelected ? theme.colors.primary : undefined} bold={isSelected}>
-          {marker}
+          {selector}
         </Text>
       </Box>
 
@@ -47,8 +48,14 @@ export function WorktreeRow({
           bold={isSelected || isCurrent}
           inverse={isSelected}
         >
-          {wt.isDetached ? `(${wt.head})` : wt.branch}
+          {branchName}
         </Text>
+        {isCurrent && (
+          <Text color={theme.colors.success} dimColor>
+            {' '}
+            ●
+          </Text>
+        )}
         {wt.isMain && <Text color={theme.colors.muted}> [main]</Text>}
       </Box>
 
