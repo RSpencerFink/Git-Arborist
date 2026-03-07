@@ -46,12 +46,12 @@ export function WorktreeRow({
         <Text color={theme.colors.muted}>{wt.head}</Text>
       </Box>
 
-      <Box width={16}>
-        <StatusCell status={status} />
+      <Box width={30}>
+        <ChangesCell status={status} />
       </Box>
 
-      <Box width={12}>
-        <SyncCell status={status} />
+      <Box width={16}>
+        <RemoteCell status={status} />
       </Box>
 
       {prInfo && (
@@ -73,7 +73,7 @@ export function WorktreeRow({
   );
 }
 
-function StatusCell({ status }: { status: BranchStatus | null }) {
+function ChangesCell({ status }: { status: BranchStatus | null }) {
   if (!status) {
     return <Text color={theme.colors.muted}>?</Text>;
   }
@@ -82,54 +82,37 @@ function StatusCell({ status }: { status: BranchStatus | null }) {
     return <Text color={theme.colors.success}>{theme.symbols.clean} clean</Text>;
   }
 
+  const total = status.staged + status.modified + status.untracked;
+  const parts: string[] = [];
+  if (status.staged > 0) parts.push(`${status.staged} staged`);
+  if (status.modified > 0) parts.push(`${status.modified} modified`);
+  if (status.untracked > 0) parts.push(`${status.untracked} new`);
+
   return (
-    <Box>
-      {status.staged > 0 && (
-        <Text color={theme.colors.success}>
-          {theme.symbols.staged}
-          {status.staged}{' '}
-        </Text>
-      )}
-      {status.modified > 0 && (
-        <Text color={theme.colors.warning}>
-          {theme.symbols.dirty}
-          {status.modified}{' '}
-        </Text>
-      )}
-      {status.untracked > 0 && (
-        <Text color={theme.colors.muted}>
-          {theme.symbols.untracked}
-          {status.untracked}
-        </Text>
-      )}
-    </Box>
+    <Text color={theme.colors.warning}>
+      {total} file{total !== 1 ? 's' : ''}{' '}
+      <Text color={theme.colors.muted}>({parts.join(', ')})</Text>
+    </Text>
   );
 }
 
-function SyncCell({ status }: { status: BranchStatus | null }) {
+function RemoteCell({ status }: { status: BranchStatus | null }) {
   if (!status) {
     return <Text color={theme.colors.muted}>—</Text>;
   }
 
   if (status.ahead === 0 && status.behind === 0) {
-    return <Text color={theme.colors.muted}>—</Text>;
+    return <Text color={theme.colors.success}>up to date</Text>;
   }
 
+  const parts: string[] = [];
+  if (status.ahead > 0) parts.push(`${status.ahead} to push`);
+  if (status.behind > 0) parts.push(`${status.behind} to pull`);
+
   return (
-    <Box>
-      {status.ahead > 0 && (
-        <Text color={theme.colors.success}>
-          {theme.symbols.ahead}
-          {status.ahead}{' '}
-        </Text>
-      )}
-      {status.behind > 0 && (
-        <Text color={theme.colors.error}>
-          {theme.symbols.behind}
-          {status.behind}
-        </Text>
-      )}
-    </Box>
+    <Text color={status.behind > 0 ? theme.colors.warning : theme.colors.success}>
+      {parts.join(', ')}
+    </Text>
   );
 }
 

@@ -17,8 +17,8 @@ export async function status(ctx: GwContext, _args: string[]): Promise<void> {
     pad('', 3),
     pad('Branch', 30),
     pad('Head', 10),
-    pad('Status', 15),
-    pad('Sync', 12),
+    pad('Changes', 30),
+    pad('Remote', 16),
     'Path',
   ].join('');
 
@@ -35,37 +35,44 @@ export async function status(ctx: GwContext, _args: string[]): Promise<void> {
 
     const headCol = pad(wt.head, 10);
 
-    let statusCol = '';
-    let syncCol = '';
+    let changesCol = '';
+    let remoteCol = '';
 
     try {
       const branchStatus = await getBranchStatus(wt.branch, wt.path);
 
       if (branchStatus.dirty) {
+        const total = branchStatus.staged + branchStatus.modified + branchStatus.untracked;
         const parts: string[] = [];
-        if (branchStatus.staged > 0) parts.push(c.green(`+${branchStatus.staged}`));
-        if (branchStatus.modified > 0) parts.push(c.yellow(`~${branchStatus.modified}`));
-        if (branchStatus.untracked > 0) parts.push(c.dim(`?${branchStatus.untracked}`));
-        statusCol = parts.join(' ');
+        if (branchStatus.staged > 0) parts.push(`${branchStatus.staged} staged`);
+        if (branchStatus.modified > 0) parts.push(`${branchStatus.modified} modified`);
+        if (branchStatus.untracked > 0) parts.push(`${branchStatus.untracked} new`);
+        changesCol =
+          c.yellow(`${total} file${total !== 1 ? 's' : ''}`) + c.dim(` (${parts.join(', ')})`);
       } else {
-        statusCol = c.green('clean');
+        changesCol = c.green('clean');
       }
 
-      const syncParts: string[] = [];
-      if (branchStatus.ahead > 0) syncParts.push(c.green(`↑${branchStatus.ahead}`));
-      if (branchStatus.behind > 0) syncParts.push(c.red(`↓${branchStatus.behind}`));
-      syncCol = syncParts.join(' ') || c.dim('—');
+      if (branchStatus.ahead === 0 && branchStatus.behind === 0) {
+        remoteCol = c.green('up to date');
+      } else {
+        const parts: string[] = [];
+        if (branchStatus.ahead > 0) parts.push(`${branchStatus.ahead} to push`);
+        if (branchStatus.behind > 0) parts.push(`${branchStatus.behind} to pull`);
+        remoteCol =
+          branchStatus.behind > 0 ? c.yellow(parts.join(', ')) : c.green(parts.join(', '));
+      }
     } catch {
-      statusCol = c.dim('?');
-      syncCol = c.dim('?');
+      changesCol = c.dim('?');
+      remoteCol = c.dim('?');
     }
 
     const row = [
       marker,
       isCurrent ? c.green(branchCol) : branchCol,
       c.dim(headCol),
-      pad(statusCol, 15),
-      pad(syncCol, 12),
+      pad(changesCol, 30),
+      pad(remoteCol, 16),
       c.dim(wt.path),
     ].join('');
 

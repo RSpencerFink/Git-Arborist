@@ -158,14 +158,14 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
             Head
           </Text>
         </Box>
-        <Box width={16}>
+        <Box width={30}>
           <Text bold color={theme.colors.muted}>
-            Status
+            Changes
           </Text>
         </Box>
-        <Box width={12}>
+        <Box width={16}>
           <Text bold color={theme.colors.muted}>
-            Sync
+            Remote
           </Text>
         </Box>
         {showPr && (
