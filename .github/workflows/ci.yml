@@ -24,6 +24,8 @@ jobs:
           git config --global user.name "CI"
           git config --global init.defaultBranch main
 
+      - run: bun scripts/version.ts
+
       - run: bun run lint
 
       - run: bun test

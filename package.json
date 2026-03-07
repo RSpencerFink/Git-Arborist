@@ -20,6 +20,7 @@
     "dev": "bun run src/index.ts",
     "build": "bun build src/index.ts --compile --outfile gw",
     "build:all": "bun scripts/build.ts",
+    "pretest": "bun scripts/version.ts",
     "test": "bun test",
     "lint": "bunx biome check src/",
     "format": "bunx biome format --write src/",
