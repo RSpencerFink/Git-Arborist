@@ -100,10 +100,10 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
     if (input === 'r') {
       refresh();
     }
-    if (key.upArrow || input === 'k') {
+    if (key.upArrow) {
       setSelectedIndex((i) => Math.max(0, i - 1));
     }
-    if (key.downArrow || input === 'j') {
+    if (key.downArrow) {
       setSelectedIndex((i) => Math.min(worktrees.length - 1, i + 1));
     }
     if (key.return && worktrees[selectedIndex]) {
@@ -225,7 +225,7 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
 
       {/* Footer */}
       <Box marginTop={1}>
-        <Text color={theme.colors.muted}>[j/k] navigate [enter] switch [r] refresh [q] quit</Text>
+        <Text color={theme.colors.muted}>[↑/↓] navigate [enter] switch [r] refresh [q] quit</Text>
       </Box>
     </Box>
   );
