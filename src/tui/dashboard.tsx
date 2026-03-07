@@ -1,6 +1,4 @@
 import { writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { Box, Text, render, useApp, useInput } from 'ink';
 import Spinner from 'ink-spinner';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -112,12 +110,14 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
     }
   });
 
+  const cdFile = process.env.GW_CD_FILE;
+  const hasShellWrapper = Boolean(cdFile);
+
   useEffect(() => {
-    if (switchTo) {
-      const cdFile = join(tmpdir(), `gw-dash-cd-${process.ppid}`);
+    if (switchTo && cdFile) {
       writeFileSync(cdFile, switchTo);
     }
-  }, [switchTo]);
+  }, [switchTo, cdFile]);
 
   const currentPath = process.cwd();
 
@@ -224,8 +224,20 @@ function Dashboard({ ctx, showPr, showGraphite }: DashboardProps) {
       ))}
 
       {/* Footer */}
-      <Box marginTop={1}>
-        <Text color={theme.colors.muted}>[↑/↓] navigate [enter] switch [r] refresh [q] quit</Text>
+      {!hasShellWrapper && (
+        <Box marginTop={1}>
+          <Text color={theme.colors.warning}>
+            Shell integration required for switching. Add to .zshrc:{' '}
+          </Text>
+          <Text color={theme.colors.primary} bold>
+            eval "$(gw shell-init zsh)"
+          </Text>
+        </Box>
+      )}
+      <Box marginTop={hasShellWrapper ? 1 : 0}>
+        <Text color={theme.colors.muted}>
+          [↑/↓] navigate{hasShellWrapper ? ' [enter] switch' : ''} [r] refresh [q] quit
+        </Text>
       </Box>
     </Box>
   );

@@ -25,7 +25,7 @@ gw() {
   elif [ "$1" = "dash" ]; then
     local cd_file="/tmp/gw-dash-cd-$$"
     rm -f "$cd_file"
-    command gw "$@"
+    GW_CD_FILE="$cd_file" command gw "$@"
     if [ -f "$cd_file" ]; then
       local dir
       dir=$(cat "$cd_file")
@@ -54,7 +54,7 @@ gw() {
   elif [ "$1" = "dash" ]; then
     local cd_file="/tmp/gw-dash-cd-$$"
     rm -f "$cd_file"
-    command gw "$@"
+    GW_CD_FILE="$cd_file" command gw "$@"
     if [ -f "$cd_file" ]; then
       local dir
       dir=$(cat "$cd_file")
@@ -82,7 +82,7 @@ function gw
   else if test "$argv[1]" = "dash"
     set -l cd_file "/tmp/gw-dash-cd-$fish_pid"
     rm -f "$cd_file"
-    command gw $argv
+    GW_CD_FILE="$cd_file" command gw $argv
     if test -f "$cd_file"
       set -l dir (cat "$cd_file")
       rm -f "$cd_file"
