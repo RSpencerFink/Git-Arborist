@@ -1,15 +1,3 @@
-import {
-  branchExists,
-  deleteBranch,
-  getDefaultBranch,
-  getCurrentBranch,
-  isMerged,
-} from "./git.ts";
+import { branchExists, deleteBranch, getCurrentBranch, getDefaultBranch, isMerged } from './git.ts';
 
-export {
-  branchExists,
-  deleteBranch,
-  getDefaultBranch,
-  getCurrentBranch,
-  isMerged,
-};
+export { branchExists, deleteBranch, getDefaultBranch, getCurrentBranch, isMerged };

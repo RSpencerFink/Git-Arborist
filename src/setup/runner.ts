@@ -1,9 +1,9 @@
-import { existsSync, symlinkSync, copyFileSync, mkdirSync } from "node:fs";
-import { join, dirname, basename } from "node:path";
-import type { GwContext } from "../core/context.ts";
-import { exec } from "../utils/exec.ts";
-import { c } from "../utils/color.ts";
-import { log } from "../utils/logger.ts";
+import { copyFileSync, existsSync, mkdirSync, symlinkSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
+import type { GwContext } from '../core/context.ts';
+import { c } from '../utils/color.ts';
+import { exec } from '../utils/exec.ts';
+import { log } from '../utils/logger.ts';
 
 export async function runSetupHooks(
   ctx: GwContext,
@@ -59,23 +59,18 @@ export async function runSetupHooks(
     for (const item of setup.run) {
       const runItem = item as { command: string; if_exists?: string };
 
-      if (
-        runItem.if_exists &&
-        !existsSync(join(worktreePath, runItem.if_exists))
-      ) {
+      if (runItem.if_exists && !existsSync(join(worktreePath, runItem.if_exists))) {
         log.dim(`  Skip run (condition not met): ${runItem.command}`);
         continue;
       }
 
       log.info(`  Running: ${c.dim(runItem.command)}`);
-      const result = await exec(["sh", "-c", runItem.command], {
+      const result = await exec(['sh', '-c', runItem.command], {
         cwd: worktreePath,
       });
 
       if (result.exitCode !== 0) {
-        log.warn(
-          `  Command failed (exit ${result.exitCode}): ${runItem.command}`,
-        );
+        log.warn(`  Command failed (exit ${result.exitCode}): ${runItem.command}`);
         if (result.stderr) log.dim(`  ${result.stderr}`);
       } else {
         log.success(`  Completed: ${c.dim(runItem.command)}`);

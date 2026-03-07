@@ -1,16 +1,16 @@
-import type { GwContext } from "../core/context.ts";
-import type { GwPlugin } from "./types.ts";
-import { HookRegistry } from "./hooks.ts";
+import type { GwContext } from '../core/context.ts';
+import { HookRegistry } from './hooks.ts';
+import type { GwPlugin } from './types.ts';
 
 export async function loadPlugins(ctx: GwContext): Promise<HookRegistry> {
   const registry = new HookRegistry();
 
   // Load built-in plugins based on config
   const builtinPlugins: Record<string, () => Promise<GwPlugin>> = {
-    git: async () => (await import("./builtin/git.ts")).default,
-    deps: async () => (await import("./builtin/deps.ts")).default,
-    env: async () => (await import("./builtin/env.ts")).default,
-    tmux: async () => (await import("./builtin/tmux.ts")).default,
+    git: async () => (await import('./builtin/git.ts')).default,
+    deps: async () => (await import('./builtin/deps.ts')).default,
+    env: async () => (await import('./builtin/env.ts')).default,
+    tmux: async () => (await import('./builtin/tmux.ts')).default,
   };
 
   // git plugin is always active
@@ -19,7 +19,7 @@ export async function loadPlugins(ctx: GwContext): Promise<HookRegistry> {
 
   // Load configured plugins
   for (const [name, config] of Object.entries(ctx.config.plugins)) {
-    if (!config.enabled || name === "git") continue;
+    if (!config.enabled || name === 'git') continue;
 
     const loader = builtinPlugins[name];
     if (loader) {

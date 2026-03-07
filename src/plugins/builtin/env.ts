@@ -1,18 +1,16 @@
-import { existsSync, copyFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
-import type { GwPlugin } from "../types.ts";
-import { log } from "../../utils/logger.ts";
+import { copyFileSync, existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { log } from '../../utils/logger.ts';
+import type { GwPlugin } from '../types.ts';
 
 const envPlugin: GwPlugin = {
-  name: "env",
-  version: "1.0.0",
+  name: 'env',
+  version: '1.0.0',
   hooks: {
-    async "worktree:created"(ctx, wt) {
+    async 'worktree:created'(ctx, wt) {
       // Copy .env* files from main worktree
       const entries = readdirSync(ctx.gitRoot);
-      const envFiles = entries.filter(
-        (f) => f.startsWith(".env") && !f.endsWith(".example"),
-      );
+      const envFiles = entries.filter((f) => f.startsWith('.env') && !f.endsWith('.example'));
 
       for (const file of envFiles) {
         const source = join(ctx.gitRoot, file);

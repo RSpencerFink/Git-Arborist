@@ -1,13 +1,13 @@
-import type { GwContext } from "../core/context.ts";
-import { getWorktrees, getCurrentWorktree } from "../core/worktree.ts";
-import { getBranchStatus, type BranchStatus } from "../core/git.ts";
-import { c } from "../utils/color.ts";
+import type { GwContext } from '../core/context.ts';
+import { type BranchStatus, getBranchStatus } from '../core/git.ts';
+import { getCurrentWorktree, getWorktrees } from '../core/worktree.ts';
+import { c } from '../utils/color.ts';
 
 export async function ls(ctx: GwContext, _args: string[]): Promise<void> {
   const worktrees = await getWorktrees(ctx);
 
   if (worktrees.length === 0) {
-    console.log(c.dim("No worktrees found."));
+    console.log(c.dim('No worktrees found.'));
     return;
   }
 
@@ -20,16 +20,14 @@ export async function ls(ctx: GwContext, _args: string[]): Promise<void> {
     if (wt.isBare) continue;
 
     const isCurrent = currentWt?.path === wt.path;
-    const marker = isCurrent ? c.green("*") : " ";
+    const marker = isCurrent ? c.green('*') : ' ';
 
-    let branchDisplay = wt.isDetached
-      ? c.dim(`(detached ${wt.head})`)
-      : c.branch(wt.branch);
+    let branchDisplay = wt.isDetached ? c.dim(`(detached ${wt.head})`) : c.branch(wt.branch);
     if (wt.isMain) {
-      branchDisplay += c.dim(" [main]");
+      branchDisplay += c.dim(' [main]');
     }
 
-    let statusParts: string[] = [];
+    const statusParts: string[] = [];
     try {
       const status = await getBranchStatus(wt.branch, wt.path);
       if (status.dirty) {
@@ -37,22 +35,22 @@ export async function ls(ctx: GwContext, _args: string[]): Promise<void> {
         if (status.staged > 0) parts.push(c.green(`+${status.staged}`));
         if (status.modified > 0) parts.push(c.yellow(`~${status.modified}`));
         if (status.untracked > 0) parts.push(c.dim(`?${status.untracked}`));
-        statusParts.push(parts.join(" "));
+        statusParts.push(parts.join(' '));
       }
       if (status.ahead > 0 || status.behind > 0) {
         const sync: string[] = [];
         if (status.ahead > 0) sync.push(c.green(`↑${status.ahead}`));
         if (status.behind > 0) sync.push(c.red(`↓${status.behind}`));
-        statusParts.push(sync.join(" "));
+        statusParts.push(sync.join(' '));
       }
     } catch {
       // Skip status on error
     }
 
-    const statusStr = statusParts.length > 0 ? ` ${statusParts.join(" ")}` : "";
+    const statusStr = statusParts.length > 0 ? ` ${statusParts.join(' ')}` : '';
     rows.push(`${marker} ${branchDisplay}${statusStr}`);
     rows.push(`  ${c.dim(wt.path)}`);
   }
 
-  console.log(rows.join("\n"));
+  console.log(rows.join('\n'));
 }

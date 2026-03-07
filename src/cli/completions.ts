@@ -1,38 +1,36 @@
 export function generateCompletions(shell: string): string {
   switch (shell) {
-    case "zsh":
+    case 'zsh':
       return ZSH_COMPLETIONS;
-    case "bash":
+    case 'bash':
       return BASH_COMPLETIONS;
-    case "fish":
+    case 'fish':
       return FISH_COMPLETIONS;
     default:
-      throw new Error(
-        `Unsupported shell: ${shell}. Supported: zsh, bash, fish`,
-      );
+      throw new Error(`Unsupported shell: ${shell}. Supported: zsh, bash, fish`);
   }
 }
 
 const COMMANDS = [
-  "add",
-  "rm",
-  "go",
-  "ls",
-  "main",
-  "status",
-  "prune",
-  "gc",
-  "clean",
-  "init",
-  "setup",
-  "clone",
-  "run",
-  "open",
-  "tmux",
-  "config",
-  "plugin",
-  "completions",
-  "shell-init",
+  'add',
+  'rm',
+  'go',
+  'ls',
+  'main',
+  'status',
+  'prune',
+  'gc',
+  'clean',
+  'init',
+  'setup',
+  'clone',
+  'run',
+  'open',
+  'tmux',
+  'config',
+  'plugin',
+  'completions',
+  'shell-init',
 ];
 
 const ZSH_COMPLETIONS = `#compdef gw
@@ -102,7 +100,7 @@ const BASH_COMPLETIONS = `_gw() {
   COMPREPLY=()
   cur="\${COMP_WORDS[COMP_CWORD]}"
   prev="\${COMP_WORDS[COMP_CWORD-1]}"
-  commands="${COMMANDS.join(" ")}"
+  commands="${COMMANDS.join(' ')}"
 
   if [ $COMP_CWORD -eq 1 ]; then
     COMPREPLY=( $(compgen -W "$commands" -- "$cur") )

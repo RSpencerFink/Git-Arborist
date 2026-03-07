@@ -1,4 +1,4 @@
-import { $ } from "bun";
+import { $ } from 'bun';
 
 export interface ExecResult {
   stdout: string;
@@ -6,14 +6,11 @@ export interface ExecResult {
   exitCode: number;
 }
 
-export async function exec(
-  cmd: string[],
-  options?: { cwd?: string },
-): Promise<ExecResult> {
+export async function exec(cmd: string[], options?: { cwd?: string }): Promise<ExecResult> {
   const proc = Bun.spawn(cmd, {
     cwd: options?.cwd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
 
   const [stdout, stderr] = await Promise.all([
@@ -30,13 +27,10 @@ export async function exec(
   };
 }
 
-export async function execOrThrow(
-  cmd: string[],
-  options?: { cwd?: string },
-): Promise<string> {
+export async function execOrThrow(cmd: string[], options?: { cwd?: string }): Promise<string> {
   const result = await exec(cmd, options);
   if (result.exitCode !== 0) {
-    throw new Error(`Command failed: ${cmd.join(" ")}\n${result.stderr}`);
+    throw new Error(`Command failed: ${cmd.join(' ')}\n${result.stderr}`);
   }
   return result.stdout;
 }

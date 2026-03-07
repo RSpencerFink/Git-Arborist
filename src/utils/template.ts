@@ -6,9 +6,9 @@
 const FILTERS: Record<string, (input: string) => string> = {
   sanitize(input: string): string {
     return input
-      .replace(/[^a-zA-Z0-9_\-/.]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
+      .replace(/[^a-zA-Z0-9_\-/.]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
   },
   lowercase(input: string): string {
     return input.toLowerCase();
@@ -18,25 +18,19 @@ const FILTERS: Record<string, (input: string) => string> = {
   },
 };
 
-export function renderTemplate(
-  template: string,
-  variables: Record<string, string>,
-): string {
-  return template.replace(
-    /\{\{\s*(\w+)(?:\s*\|\s*(\w+))?\s*\}\}/g,
-    (_match, name, filter) => {
-      const value = variables[name];
-      if (value === undefined) {
-        throw new Error(`Unknown template variable: ${name}`);
+export function renderTemplate(template: string, variables: Record<string, string>): string {
+  return template.replace(/\{\{\s*(\w+)(?:\s*\|\s*(\w+))?\s*\}\}/g, (_match, name, filter) => {
+    const value = variables[name];
+    if (value === undefined) {
+      throw new Error(`Unknown template variable: ${name}`);
+    }
+    if (filter) {
+      const fn = FILTERS[filter];
+      if (!fn) {
+        throw new Error(`Unknown template filter: ${filter}`);
       }
-      if (filter) {
-        const fn = FILTERS[filter];
-        if (!fn) {
-          throw new Error(`Unknown template filter: ${filter}`);
-        }
-        return fn(value);
-      }
-      return value;
-    },
-  );
+      return fn(value);
+    }
+    return value;
+  });
 }

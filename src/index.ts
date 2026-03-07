@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
-import { dispatch } from "./cli/dispatcher.ts";
-import { log } from "./utils/logger.ts";
+import { dispatch } from './cli/dispatcher.ts';
+import { log } from './utils/logger.ts';
 
 try {
   await dispatch(process.argv);

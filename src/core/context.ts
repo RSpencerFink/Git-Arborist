@@ -1,5 +1,5 @@
-import { getGitRoot } from "./git.ts";
-import { loadConfig, type GwConfig } from "./config.ts";
+import { type GwConfig, loadConfig } from './config.ts';
+import { getGitRoot } from './git.ts';
 
 export interface GwContext {
   gitRoot: string;

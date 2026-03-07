@@ -1,13 +1,13 @@
-import { basename } from "node:path";
-import type { GwContext } from "./context.ts";
+import { basename } from 'node:path';
+import type { GwContext } from './context.ts';
 import {
-  addWorktree as gitAddWorktree,
-  removeWorktree as gitRemoveWorktree,
-  listWorktrees as gitListWorktrees,
-  getDefaultBranch,
   type WorktreeInfo,
-} from "./git.ts";
-import { resolveWorktreePath } from "./paths.ts";
+  getDefaultBranch,
+  addWorktree as gitAddWorktree,
+  listWorktrees as gitListWorktrees,
+  removeWorktree as gitRemoveWorktree,
+} from './git.ts';
+import { resolveWorktreePath } from './paths.ts';
 
 export type { WorktreeInfo };
 
@@ -27,7 +27,7 @@ export async function createWorktree(
   return {
     path: worktreePath,
     branch,
-    head: "",
+    head: '',
     isBare: false,
     isMain: false,
     isDetached: false,
@@ -47,7 +47,7 @@ export async function deleteWorktree(
   }
 
   if (wt.isMain) {
-    throw new Error("Cannot remove the main worktree");
+    throw new Error('Cannot remove the main worktree');
   }
 
   await gitRemoveWorktree(wt.path, options?.force, ctx.gitRoot);
@@ -59,9 +59,7 @@ export async function getWorktrees(ctx: GwContext): Promise<WorktreeInfo[]> {
   return gitListWorktrees(ctx.gitRoot);
 }
 
-export async function getMainWorktree(
-  ctx: GwContext,
-): Promise<WorktreeInfo | undefined> {
+export async function getMainWorktree(ctx: GwContext): Promise<WorktreeInfo | undefined> {
   const worktrees = await gitListWorktrees(ctx.gitRoot);
   return worktrees.find((wt) => wt.isMain);
 }
@@ -87,11 +85,7 @@ export function findWorktree(
   return contains;
 }
 
-export async function getCurrentWorktree(
-  ctx: GwContext,
-): Promise<WorktreeInfo | undefined> {
+export async function getCurrentWorktree(ctx: GwContext): Promise<WorktreeInfo | undefined> {
   const worktrees = await gitListWorktrees(ctx.gitRoot);
-  return worktrees.find(
-    (wt) => wt.path === ctx.cwd || ctx.cwd.startsWith(wt.path + "/"),
-  );
+  return worktrees.find((wt) => wt.path === ctx.cwd || ctx.cwd.startsWith(`${wt.path}/`));
 }

@@ -1,6 +1,6 @@
-import { existsSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { existsSync, readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 export interface SetupCopyConfig {
   from: string;
@@ -36,7 +36,7 @@ export interface GwConfig {
 }
 
 const DEFAULT_CONFIG: GwConfig = {
-  worktree_path: "../.worktrees/{{ branch | sanitize }}",
+  worktree_path: '../.worktrees/{{ branch | sanitize }}',
   setup: {
     copy: [],
     symlink: [],
@@ -46,11 +46,11 @@ const DEFAULT_CONFIG: GwConfig = {
 };
 
 export function getGlobalConfigPath(): string {
-  return join(homedir(), ".config", "gw", "config.toml");
+  return join(homedir(), '.config', 'gw', 'config.toml');
 }
 
 export function getProjectConfigPath(gitRoot: string): string {
-  return join(gitRoot, ".gw.toml");
+  return join(gitRoot, '.gw.toml');
 }
 
 function parseToml(content: string): Record<string, unknown> {
@@ -65,11 +65,11 @@ function parseSimpleToml(content: string): Record<string, unknown> {
   let currentArraySection: string | null = null;
   const arrayAccumulators: Record<string, Record<string, unknown>[]> = {};
 
-  for (const rawLine of content.split("\n")) {
+  for (const rawLine of content.split('\n')) {
     const line = rawLine.trim();
 
     // Skip empty lines and comments
-    if (!line || line.startsWith("#")) continue;
+    if (!line || line.startsWith('#')) continue;
 
     // Array of tables: [[section.name]]
     const arrayMatch = line.match(/^\[\[([^\]]+)\]\]$/);
@@ -119,38 +119,31 @@ function parseSimpleToml(content: string): Record<string, unknown> {
 
 function parseTomlValue(raw: string): unknown {
   // String (quoted)
-  if (
-    (raw.startsWith('"') && raw.endsWith('"')) ||
-    (raw.startsWith("'") && raw.endsWith("'"))
-  ) {
+  if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
     return raw.slice(1, -1);
   }
   // Boolean
-  if (raw === "true") return true;
-  if (raw === "false") return false;
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
   // Number
   if (/^-?\d+(\.\d+)?$/.test(raw)) return Number(raw);
   // Array (simple inline)
-  if (raw.startsWith("[") && raw.endsWith("]")) {
+  if (raw.startsWith('[') && raw.endsWith(']')) {
     return raw
       .slice(1, -1)
-      .split(",")
+      .split(',')
       .map((s) => parseTomlValue(s.trim()))
-      .filter((v) => v !== "");
+      .filter((v) => v !== '');
   }
   return raw;
 }
 
-function setNested(
-  obj: Record<string, unknown>,
-  path: string,
-  value: unknown,
-): void {
-  const parts = path.split(".");
+function setNested(obj: Record<string, unknown>, path: string, value: unknown): void {
+  const parts = path.split('.');
   let current = obj;
   for (let i = 0; i < parts.length - 1; i++) {
     const key = parts[i];
-    if (!(key in current) || typeof current[key] !== "object") {
+    if (!(key in current) || typeof current[key] !== 'object') {
       current[key] = {};
     }
     current = current[key] as Record<string, unknown>;
@@ -167,7 +160,7 @@ export function loadConfig(gitRoot: string): GwConfig {
 
   if (existsSync(globalPath)) {
     try {
-      globalConfig = parseToml(readFileSync(globalPath, "utf-8"));
+      globalConfig = parseToml(readFileSync(globalPath, 'utf-8'));
     } catch {
       // Ignore invalid global config
     }
@@ -175,7 +168,7 @@ export function loadConfig(gitRoot: string): GwConfig {
 
   if (existsSync(projectPath)) {
     try {
-      projectConfig = parseToml(readFileSync(projectPath, "utf-8"));
+      projectConfig = parseToml(readFileSync(projectPath, 'utf-8'));
     } catch {
       // Ignore invalid project config
     }
@@ -194,53 +187,43 @@ function mergeConfigs(
       (project.worktree_path as string) ??
       (global.worktree_path as string) ??
       defaults.worktree_path,
-    editor:
-      (project.editor as string) ??
-      (global.editor as string) ??
-      defaults.editor,
+    editor: (project.editor as string) ?? (global.editor as string) ?? defaults.editor,
     setup: {
       copy:
-        getSetupArray(project, "setup.copy") ??
-        getSetupArray(global, "setup.copy") ??
+        getSetupArray(project, 'setup.copy') ??
+        getSetupArray(global, 'setup.copy') ??
         defaults.setup.copy ??
         [],
       symlink:
-        getSetupArray(project, "setup.symlink") ??
-        getSetupArray(global, "setup.symlink") ??
+        getSetupArray(project, 'setup.symlink') ??
+        getSetupArray(global, 'setup.symlink') ??
         defaults.setup.symlink ??
         [],
       run:
-        getSetupArray(project, "setup.run") ??
-        getSetupArray(global, "setup.run") ??
+        getSetupArray(project, 'setup.run') ??
+        getSetupArray(global, 'setup.run') ??
         defaults.setup.run ??
         [],
     },
     plugins: {
       ...defaults.plugins,
-      ...(getNested(global, "plugins") as
-        | Record<string, PluginConfig>
-        | undefined),
-      ...(getNested(project, "plugins") as
-        | Record<string, PluginConfig>
-        | undefined),
+      ...(getNested(global, 'plugins') as Record<string, PluginConfig> | undefined),
+      ...(getNested(project, 'plugins') as Record<string, PluginConfig> | undefined),
     },
   };
 }
 
 function getNested(obj: Record<string, unknown>, path: string): unknown {
-  const parts = path.split(".");
+  const parts = path.split('.');
   let current: unknown = obj;
   for (const part of parts) {
-    if (current == null || typeof current !== "object") return undefined;
+    if (current == null || typeof current !== 'object') return undefined;
     current = (current as Record<string, unknown>)[part];
   }
   return current;
 }
 
-function getSetupArray(
-  obj: Record<string, unknown>,
-  path: string,
-): unknown[] | undefined {
+function getSetupArray(obj: Record<string, unknown>, path: string): unknown[] | undefined {
   const val = getNested(obj, path);
   return Array.isArray(val) ? val : undefined;
 }

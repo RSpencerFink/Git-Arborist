@@ -1,15 +1,13 @@
 export function generateShellInit(shell: string): string {
   switch (shell) {
-    case "zsh":
+    case 'zsh':
       return ZSH_INIT;
-    case "bash":
+    case 'bash':
       return BASH_INIT;
-    case "fish":
+    case 'fish':
       return FISH_INIT;
     default:
-      throw new Error(
-        `Unsupported shell: ${shell}. Supported: zsh, bash, fish`,
-      );
+      throw new Error(`Unsupported shell: ${shell}. Supported: zsh, bash, fish`);
   }
 }
 

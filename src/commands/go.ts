@@ -1,6 +1,6 @@
-import type { GwContext } from "../core/context.ts";
-import { getWorktrees, findWorktree } from "../core/worktree.ts";
-import { log } from "../utils/logger.ts";
+import type { GwContext } from '../core/context.ts';
+import { findWorktree, getWorktrees } from '../core/worktree.ts';
+import { log } from '../utils/logger.ts';
 
 interface GoArgs {
   name?: string;
@@ -12,7 +12,7 @@ export function parseGoArgs(args: string[]): GoArgs {
   let printPath = false;
 
   for (const arg of args) {
-    if (arg === "--print-path") {
+    if (arg === '--print-path') {
       printPath = true;
     } else if (!name) {
       name = arg;
@@ -29,12 +29,12 @@ export async function go(ctx: GwContext, args: string[]): Promise<void> {
 
   if (!name) {
     // Interactive selection using clack
-    const { select, isCancel } = await import("@clack/prompts");
+    const { select, isCancel } = await import('@clack/prompts');
     const selected = await select({
-      message: "Select worktree:",
+      message: 'Select worktree:',
       options: nonBare.map((wt) => ({
         value: wt.path,
-        label: `${wt.branch}${wt.isMain ? " (main)" : ""}`,
+        label: `${wt.branch}${wt.isMain ? ' (main)' : ''}`,
         hint: wt.path,
       })),
     });
