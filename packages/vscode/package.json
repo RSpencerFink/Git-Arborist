@@ -3,7 +3,7 @@
   "displayName": "Git Arborist",
   "description": "Manage git worktrees with arb (git-arborist) directly from VS Code",
   "version": "0.1.0",
-  "publisher": "git-arborist",
+  "publisher": "rspencerfink",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
