@@ -1,6 +1,6 @@
 {
   "name": "git-arborist",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Git Worktrees, Finally Simple",
   "type": "module",
   "bin": {
