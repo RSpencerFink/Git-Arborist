@@ -139,3 +139,24 @@ jobs:
           user_email: github-actions[bot]@users.noreply.github.com
           user_name: github-actions[bot]
           commit_message: "Update arb to ${{ steps.version.outputs.version }}"
+
+  publish-vscode:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: cd packages/vscode && npm ci
+
+      - name: Build extension
+        run: cd packages/vscode && npm run build
+
+      - name: Publish to VS Code Marketplace
+        run: cd packages/vscode && npx vsce publish
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
