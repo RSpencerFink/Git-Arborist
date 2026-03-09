@@ -5,7 +5,7 @@ import { c } from '../utils/color.ts';
 import { log } from '../utils/logger.ts';
 
 const DEFAULT_ARBORIST_TOML = `# arborist configuration
-# See: https://github.com/git-arborist/git-arborist
+# See: https://github.com/rspencerfink/git-arborist
 
 # Where to create worktrees (relative to repo root)
 # Available variables: {{ branch }}, {{ branch | sanitize }}

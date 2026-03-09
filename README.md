@@ -11,13 +11,13 @@ Built with TypeScript + Bun. Ships as a single binary.
 ### Homebrew (macOS / Linux)
 
 ```bash
-brew install git-arborist/git-arborist/arb
+brew install rspencerfink/git-arborist/arb
 ```
 
 ### curl one-liner
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/git-arborist/git-arborist/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rspencerfink/git-arborist/main/install.sh | bash
 ```
 
 ### npm / bun
@@ -30,7 +30,7 @@ npm i -g git-arborist         # also requires Bun installed
 
 ### GitHub Releases
 
-Download the binary for your platform from [Releases](https://github.com/git-arborist/git-arborist/releases), then:
+Download the binary for your platform from [Releases](https://github.com/rspencerfink/git-arborist/releases), then:
 
 ```bash
 chmod +x arb-darwin-arm64     # or your platform
@@ -40,7 +40,7 @@ mv arb-darwin-arm64 /usr/local/bin/arb
 ### From source (requires [Bun](https://bun.sh))
 
 ```bash
-git clone https://github.com/git-arborist/git-arborist.git
+git clone https://github.com/rspencerfink/git-arborist.git
 cd git-arborist
 bun install
 bun run build    # produces ./arb binary

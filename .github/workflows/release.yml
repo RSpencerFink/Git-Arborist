@@ -134,7 +134,7 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.HOMEBREW_TAP_TOKEN }}
         with:
           source_file: arb.rb
-          destination_repo: git-arborist/homebrew-git-arborist
+          destination_repo: rspencerfink/homebrew-git-arborist
           destination_folder: Formula
           user_email: github-actions[bot]@users.noreply.github.com
           user_name: github-actions[bot]

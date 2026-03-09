@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # arb installer — downloads a pre-built binary from GitHub Releases
-# Usage: curl -fsSL https://raw.githubusercontent.com/git-arborist/git-arborist/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/rspencerfink/git-arborist/main/install.sh | bash
 
-REPO="git-arborist/git-arborist"
+REPO="rspencerfink/git-arborist"
 INSTALL_DIR="${ARB_INSTALL_DIR:-/usr/local/bin}"
 FALLBACK_DIR="$HOME/.local/bin"
 

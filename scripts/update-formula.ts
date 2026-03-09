@@ -20,14 +20,14 @@ if (
   process.exit(1);
 }
 
-const baseUrl = `https://github.com/git-arborist/git-arborist/releases/download/v${version}`;
+const baseUrl = `https://github.com/rspencerfink/git-arborist/releases/download/v${version}`;
 
 const formula = `# typed: false
 # frozen_string_literal: true
 
 class Arb < Formula
   desc "Git Worktrees, Finally Simple"
-  homepage "https://github.com/git-arborist/git-arborist"
+  homepage "https://github.com/rspencerfink/git-arborist"
   version "${version}"
   license "MIT"
 

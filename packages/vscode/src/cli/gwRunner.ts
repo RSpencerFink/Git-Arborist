@@ -218,7 +218,7 @@ export async function handleArboristError(err: unknown): Promise<void> {
     );
     if (action === "Open Install Instructions") {
       vscode.env.openExternal(
-        vscode.Uri.parse("https://github.com/git-arborist/git-arborist#installation"),
+        vscode.Uri.parse("https://github.com/rspencerfink/git-arborist#installation"),
       );
     }
     return;
