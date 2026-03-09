@@ -1,12 +1,8 @@
-import { deleteBranch } from "../core/branch.ts";
-import type { GwContext } from "../core/context.ts";
-import {
-  deleteWorktree,
-  findWorktree,
-  getWorktrees,
-} from "../core/worktree.ts";
-import { c } from "../utils/color.ts";
-import { log } from "../utils/logger.ts";
+import { deleteBranch } from '../core/branch.ts';
+import type { ArboristContext } from '../core/context.ts';
+import { deleteWorktree, findWorktree, getWorktrees } from '../core/worktree.ts';
+import { c } from '../utils/color.ts';
+import { log } from '../utils/logger.ts';
 
 interface RmArgs {
   name?: string;
@@ -20,9 +16,9 @@ export function parseRmArgs(args: string[]): RmArgs {
   let branch = false;
 
   for (const arg of args) {
-    if (arg === "--force" || arg === "-f") {
+    if (arg === '--force' || arg === '-f') {
       force = true;
-    } else if (arg === "--branch") {
+    } else if (arg === '--branch') {
       branch = true;
     } else if (!name) {
       name = arg;
@@ -39,25 +35,16 @@ interface RmJsonResult {
   branch_delete_error?: string;
 }
 
-export async function rmJson(
-  ctx: GwContext,
-  args: string[],
-): Promise<RmJsonResult> {
+export async function rmJson(ctx: ArboristContext, args: string[]): Promise<RmJsonResult> {
   const parsed = parseRmArgs(args);
 
   if (!parsed.name) {
-    throw new Error(
-      "Worktree name required in --json mode. Usage: gw rm <name> --json",
-    );
+    throw new Error('Worktree name required in --json mode. Usage: arb rm <name> --json');
   }
 
-  const { branch: removedBranch, path: removedPath } = await deleteWorktree(
-    ctx,
-    parsed.name,
-    {
-      force: parsed.force,
-    },
-  );
+  const { branch: removedBranch, path: removedPath } = await deleteWorktree(ctx, parsed.name, {
+    force: parsed.force,
+  });
 
   const result: RmJsonResult = { branch: removedBranch, path: removedPath };
 
@@ -73,7 +60,7 @@ export async function rmJson(
   return result;
 }
 
-export async function rm(ctx: GwContext, args: string[]): Promise<void> {
+export async function rm(ctx: ArboristContext, args: string[]): Promise<void> {
   const parsed = parseRmArgs(args);
 
   if (!parsed.name) {
@@ -82,14 +69,14 @@ export async function rm(ctx: GwContext, args: string[]): Promise<void> {
     const nonMain = worktrees.filter((wt) => !wt.isMain && !wt.isBare);
 
     if (nonMain.length === 0) {
-      log.info("No worktrees to remove.");
+      log.info('No worktrees to remove.');
       return;
     }
 
     // Use clack for interactive selection
-    const { select, isCancel } = await import("@clack/prompts");
+    const { select, isCancel } = await import('@clack/prompts');
     const selected = await select({
-      message: "Select worktree to remove:",
+      message: 'Select worktree to remove:',
       options: nonMain.map((wt) => ({
         value: wt.branch,
         label: `${wt.branch} (${wt.path})`,
@@ -97,20 +84,16 @@ export async function rm(ctx: GwContext, args: string[]): Promise<void> {
     });
 
     if (isCancel(selected)) {
-      log.dim("Cancelled.");
+      log.dim('Cancelled.');
       return;
     }
 
     parsed.name = selected as string;
   }
 
-  const { branch: removedBranch, path: removedPath } = await deleteWorktree(
-    ctx,
-    parsed.name,
-    {
-      force: parsed.force,
-    },
-  );
+  const { branch: removedBranch, path: removedPath } = await deleteWorktree(ctx, parsed.name, {
+    force: parsed.force,
+  });
 
   log.success(`Removed worktree ${c.path(removedPath)}`);
 
@@ -119,9 +102,7 @@ export async function rm(ctx: GwContext, args: string[]): Promise<void> {
       await deleteBranch(removedBranch, parsed.force, ctx.gitRoot);
       log.success(`Deleted branch ${c.branch(removedBranch)}`);
     } catch (err) {
-      log.warn(
-        `Could not delete branch ${c.branch(removedBranch)}: ${(err as Error).message}`,
-      );
+      log.warn(`Could not delete branch ${c.branch(removedBranch)}: ${(err as Error).message}`);
     }
   }
 }

@@ -1,13 +1,13 @@
-import { type GwConfig, loadConfig } from './config.ts';
+import { type ArboristConfig, loadConfig } from './config.ts';
 import { getGitRoot } from './git.ts';
 
-export interface GwContext {
+export interface ArboristContext {
   gitRoot: string;
-  config: GwConfig;
+  config: ArboristConfig;
   cwd: string;
 }
 
-export async function createContext(cwd?: string): Promise<GwContext> {
+export async function createContext(cwd?: string): Promise<ArboristContext> {
   const effectiveCwd = cwd ?? process.cwd();
   const gitRoot = await getGitRoot(effectiveCwd);
   const config = loadConfig(gitRoot);

@@ -1,54 +1,51 @@
-import { existsSync, readFileSync } from "node:fs";
-import { getGlobalConfigPath, getProjectConfigPath } from "../core/config.ts";
-import type { GwContext } from "../core/context.ts";
-import { c } from "../utils/color.ts";
-import { exec } from "../utils/exec.ts";
-import { log } from "../utils/logger.ts";
+import { existsSync, readFileSync } from 'node:fs';
+import { getGlobalConfigPath, getProjectConfigPath } from '../core/config.ts';
+import type { ArboristContext } from '../core/context.ts';
+import { c } from '../utils/color.ts';
+import { exec } from '../utils/exec.ts';
+import { log } from '../utils/logger.ts';
 
-export async function configJson(
-  ctx: GwContext,
-  args: string[],
-): Promise<unknown> {
-  const subcommand = args[0] ?? "list";
+export async function configJson(ctx: ArboristContext, args: string[]): Promise<unknown> {
+  const subcommand = args[0] ?? 'list';
 
-  if (subcommand === "list") {
+  if (subcommand === 'list') {
     return ctx.config;
   }
 
-  if (subcommand === "get") {
+  if (subcommand === 'get') {
     const key = args[1];
-    if (!key) throw new Error("Key required. Usage: gw config get <key>");
+    if (!key) throw new Error('Key required. Usage: arb config get <key>');
     return { key, value: getConfigValue(ctx, key) ?? null };
   }
 
   throw new Error(`Subcommand '${subcommand}' not supported in --json mode`);
 }
 
-export async function config(ctx: GwContext, args: string[]): Promise<void> {
+export async function config(ctx: ArboristContext, args: string[]): Promise<void> {
   const subcommand = args[0];
 
   switch (subcommand) {
-    case "list": {
-      console.log(c.bold("Configuration:"));
+    case 'list': {
+      console.log(c.bold('Configuration:'));
       console.log(`  worktree_path: ${c.cyan(ctx.config.worktree_path)}`);
       if (ctx.config.editor) {
         console.log(`  editor: ${c.cyan(ctx.config.editor)}`);
       }
 
       if (ctx.config.setup.copy?.length) {
-        console.log(`\n  ${c.bold("Setup — copy:")}`);
+        console.log(`\n  ${c.bold('Setup — copy:')}`);
         for (const item of ctx.config.setup.copy) {
           console.log(`    ${(item as { from: string }).from}`);
         }
       }
       if (ctx.config.setup.symlink?.length) {
-        console.log(`\n  ${c.bold("Setup — symlink:")}`);
+        console.log(`\n  ${c.bold('Setup — symlink:')}`);
         for (const item of ctx.config.setup.symlink) {
           console.log(`    ${(item as { from: string }).from}`);
         }
       }
       if (ctx.config.setup.run?.length) {
-        console.log(`\n  ${c.bold("Setup — run:")}`);
+        console.log(`\n  ${c.bold('Setup — run:')}`);
         for (const item of ctx.config.setup.run) {
           console.log(`    ${(item as { command: string }).command}`);
         }
@@ -56,66 +53,58 @@ export async function config(ctx: GwContext, args: string[]): Promise<void> {
 
       const pluginEntries = Object.entries(ctx.config.plugins);
       if (pluginEntries.length > 0) {
-        console.log(`\n  ${c.bold("Plugins:")}`);
+        console.log(`\n  ${c.bold('Plugins:')}`);
         for (const [name, cfg] of pluginEntries) {
-          const status = cfg.enabled ? c.green("enabled") : c.dim("disabled");
+          const status = cfg.enabled ? c.green('enabled') : c.dim('disabled');
           console.log(`    ${name}: ${status}`);
         }
       }
       break;
     }
-    case "edit": {
-      const scope = args[1] === "--global" ? "global" : "project";
+    case 'edit': {
+      const scope = args[1] === '--global' ? 'global' : 'project';
       const configPath =
-        scope === "global"
-          ? getGlobalConfigPath()
-          : getProjectConfigPath(ctx.gitRoot);
+        scope === 'global' ? getGlobalConfigPath() : getProjectConfigPath(ctx.gitRoot);
 
       if (!existsSync(configPath)) {
         log.warn(`Config file does not exist: ${c.path(configPath)}`);
         return;
       }
 
-      const editor = process.env.EDITOR ?? "vi";
+      const editor = process.env.EDITOR ?? 'vi';
       const proc = Bun.spawn([editor, configPath], {
-        stdio: ["inherit", "inherit", "inherit"],
+        stdio: ['inherit', 'inherit', 'inherit'],
       });
       await proc.exited;
       break;
     }
-    case "get": {
+    case 'get': {
       const key = args[1];
       if (!key) {
-        throw new Error("Key required. Usage: gw config get <key>");
+        throw new Error('Key required. Usage: arb config get <key>');
       }
       const value = getConfigValue(ctx, key);
       if (value !== undefined) {
-        console.log(
-          typeof value === "object"
-            ? JSON.stringify(value, null, 2)
-            : String(value),
-        );
+        console.log(typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value));
       } else {
         log.dim(`Key not found: ${key}`);
       }
       break;
     }
-    case "set": {
-      log.warn(
-        "gw config set is not yet implemented. Edit the config file directly.",
-      );
+    case 'set': {
+      log.warn('arb config set is not yet implemented. Edit the config file directly.');
       break;
     }
     default:
-      throw new Error("Usage: gw config <list|get|set|edit> [options]");
+      throw new Error('Usage: arb config <list|get|set|edit> [options]');
   }
 }
 
-function getConfigValue(ctx: GwContext, key: string): unknown {
-  const parts = key.split(".");
+function getConfigValue(ctx: ArboristContext, key: string): unknown {
+  const parts = key.split('.');
   let current: unknown = ctx.config;
   for (const part of parts) {
-    if (current == null || typeof current !== "object") return undefined;
+    if (current == null || typeof current !== 'object') return undefined;
     current = (current as Record<string, unknown>)[part];
   }
   return current;

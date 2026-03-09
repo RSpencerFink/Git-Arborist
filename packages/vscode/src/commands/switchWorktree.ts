@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { gw, handleGwError } from "../cli/gwRunner";
+import { arb, handleArboristError } from "../cli/gwRunner";
 import type { WorktreeTreeItem } from "../providers/worktreeTreeItem";
 
 export async function switchWorktree(item?: WorktreeTreeItem): Promise<void> {
@@ -9,7 +9,7 @@ export async function switchWorktree(item?: WorktreeTreeItem): Promise<void> {
     if (item) {
       targetPath = item.worktree.path;
     } else {
-      const worktrees = await gw.ls();
+      const worktrees = await arb.ls();
       const pick = await vscode.window.showQuickPick(
         worktrees.map((wt) => ({
           label: wt.branch,
@@ -31,7 +31,7 @@ export async function switchWorktree(item?: WorktreeTreeItem): Promise<void> {
     }
 
     const behavior = vscode.workspace
-      .getConfiguration("gw")
+      .getConfiguration("arborist")
       .get<string>("switchBehavior", "newWindow");
 
     await vscode.commands.executeCommand(
@@ -40,13 +40,13 @@ export async function switchWorktree(item?: WorktreeTreeItem): Promise<void> {
       { forceNewWindow: behavior === "newWindow" },
     );
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }
 
 export async function switchToMain(): Promise<void> {
   try {
-    const worktrees = await gw.ls();
+    const worktrees = await arb.ls();
     const mainWt = worktrees.find((wt) => wt.isMain);
 
     if (!mainWt) {
@@ -55,7 +55,7 @@ export async function switchToMain(): Promise<void> {
     }
 
     const behavior = vscode.workspace
-      .getConfiguration("gw")
+      .getConfiguration("arborist")
       .get<string>("switchBehavior", "newWindow");
 
     await vscode.commands.executeCommand(
@@ -64,7 +64,7 @@ export async function switchToMain(): Promise<void> {
       { forceNewWindow: behavior === "newWindow" },
     );
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }
 

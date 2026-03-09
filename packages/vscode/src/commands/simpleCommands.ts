@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { gw, handleGwError } from "../cli/gwRunner";
+import { arb, handleArboristError } from "../cli/gwRunner";
 import type { WorktreeTreeItem } from "../providers/worktreeTreeItem";
 
 export async function cleanWorktree(item?: WorktreeTreeItem): Promise<void> {
@@ -9,7 +9,7 @@ export async function cleanWorktree(item?: WorktreeTreeItem): Promise<void> {
     if (item) {
       branch = item.worktree.branch;
     } else {
-      const worktrees = await gw.ls();
+      const worktrees = await arb.ls();
       const pick = await vscode.window.showQuickPick(
         worktrees.map((wt) => ({ label: wt.branch, description: wt.path })),
         { placeHolder: "Select worktree to clean" },
@@ -32,12 +32,12 @@ export async function cleanWorktree(item?: WorktreeTreeItem): Promise<void> {
         title: `Cleaning ${branch}...`,
       },
       async () => {
-        await gw.clean(branch);
+        await arb.clean(branch);
         vscode.window.showInformationMessage(`Worktree ${branch} cleaned`);
       },
     );
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }
 
@@ -49,12 +49,12 @@ export async function garbageCollect(): Promise<void> {
         title: "Running garbage collection...",
       },
       async () => {
-        await gw.gc();
+        await arb.gc();
         vscode.window.showInformationMessage("Garbage collection complete");
       },
     );
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }
 
@@ -94,27 +94,27 @@ export async function cloneRepo(): Promise<void> {
         title: `Cloning ${repo}...`,
       },
       async () => {
-        await gw.clone(repo, flags, { cwd: folder[0].fsPath });
+        await arb.clone(repo, flags, { cwd: folder[0].fsPath });
         vscode.window.showInformationMessage("Repository cloned");
       },
     );
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }
 
 export async function initConfig(): Promise<void> {
   try {
-    await gw.init();
+    await arb.init();
     const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri;
     if (workspaceRoot) {
-      const configUri = vscode.Uri.joinPath(workspaceRoot, ".gw.toml");
+      const configUri = vscode.Uri.joinPath(workspaceRoot, ".arborist.toml");
       const doc = await vscode.workspace.openTextDocument(configUri);
       await vscode.window.showTextDocument(doc);
     }
-    vscode.window.showInformationMessage("Created .gw.toml");
+    vscode.window.showInformationMessage("Created .arborist.toml");
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }
 
@@ -125,7 +125,7 @@ export async function runSetup(item?: WorktreeTreeItem): Promise<void> {
     if (item) {
       branch = item.worktree.branch;
     } else {
-      const worktrees = await gw.ls();
+      const worktrees = await arb.ls();
       const pick = await vscode.window.showQuickPick(
         worktrees.map((wt) => ({ label: wt.branch, description: wt.path })),
         { placeHolder: "Select worktree to run setup on" },
@@ -140,7 +140,7 @@ export async function runSetup(item?: WorktreeTreeItem): Promise<void> {
         title: `Running setup for ${branch}...`,
       },
       async () => {
-        const output = await gw.setup(branch);
+        const output = await arb.setup(branch);
         if (output) {
           const channel = vscode.window.createOutputChannel("Git Arborist: Setup");
           channel.append(output);
@@ -150,13 +150,13 @@ export async function runSetup(item?: WorktreeTreeItem): Promise<void> {
       },
     );
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }
 
 export async function runInWorktree(): Promise<void> {
   try {
-    const worktrees = await gw.ls();
+    const worktrees = await arb.ls();
     const pick = await vscode.window.showQuickPick(
       worktrees.map((wt) => ({
         label: wt.branch,
@@ -176,13 +176,13 @@ export async function runInWorktree(): Promise<void> {
     if (!cmd) return;
 
     const terminal = vscode.window.createTerminal({
-      name: `gw: ${pick.label}`,
+      name: `arb: ${pick.label}`,
       cwd: pick.path,
     });
     terminal.show();
     terminal.sendText(cmd);
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }
 
@@ -201,29 +201,29 @@ export async function editConfig(): Promise<void> {
     if (scope.value === "project") {
       const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri;
       if (workspaceRoot) {
-        const configUri = vscode.Uri.joinPath(workspaceRoot, ".gw.toml");
+        const configUri = vscode.Uri.joinPath(workspaceRoot, ".arborist.toml");
         try {
           const doc = await vscode.workspace.openTextDocument(configUri);
           await vscode.window.showTextDocument(doc);
         } catch {
           vscode.window.showWarningMessage(
-            'No .gw.toml found. Run "gw: Initialize Config" first.',
+            'No .arborist.toml found. Run "arb: Initialize Config" first.',
           );
         }
       }
     } else {
       const homeDir = process.env.HOME ?? process.env.USERPROFILE ?? "";
-      const globalUri = vscode.Uri.file(`${homeDir}/.config/gw/config.toml`);
+      const globalUri = vscode.Uri.file(`${homeDir}/.config/arborist/config.toml`);
       try {
         const doc = await vscode.workspace.openTextDocument(globalUri);
         await vscode.window.showTextDocument(doc);
       } catch {
         vscode.window.showWarningMessage(
-          "No global gw config found at ~/.config/gw/config.toml",
+          "No global arborist config found at ~/.config/arborist/config.toml",
         );
       }
     }
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }

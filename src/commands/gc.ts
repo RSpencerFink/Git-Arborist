@@ -1,9 +1,9 @@
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { pruneWorktrees } from '../core/git.ts';
 import { execOrThrow } from '../utils/exec.ts';
 import { log } from '../utils/logger.ts';
 
-export async function gc(ctx: GwContext, _args: string[]): Promise<void> {
+export async function gc(ctx: ArboristContext, _args: string[]): Promise<void> {
   log.info('Running garbage collection...');
 
   // Prune worktree metadata

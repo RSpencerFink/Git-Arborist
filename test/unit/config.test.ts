@@ -24,7 +24,7 @@ describe("loadConfig", () => {
 
   test("loads project config", () => {
     writeFileSync(
-      join(TEST_DIR, ".gw.toml"),
+      join(TEST_DIR, ".arborist.toml"),
       `worktree_path = "../my-worktrees/{{ branch }}"
 editor = "nvim"
 `,
@@ -37,7 +37,7 @@ editor = "nvim"
 
   test("loads plugin config", () => {
     writeFileSync(
-      join(TEST_DIR, ".gw.toml"),
+      join(TEST_DIR, ".arborist.toml"),
       `[plugins.deps]
 enabled = true
 strategy = "install"

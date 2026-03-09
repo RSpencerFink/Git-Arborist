@@ -1,7 +1,7 @@
 import { c } from '../../utils/color.ts';
 import { exec } from '../../utils/exec.ts';
 import { log } from '../../utils/logger.ts';
-import type { GwPlugin } from '../types.ts';
+import type { ArboristPlugin } from '../types.ts';
 
 interface PrInfo {
   number: number;
@@ -48,7 +48,7 @@ async function getPrForBranch(branch: string, cwd: string): Promise<PrInfo | nul
   }
 }
 
-const githubPlugin: GwPlugin = {
+const githubPlugin: ArboristPlugin = {
   name: 'github',
   version: '1.0.0',
   hooks: {

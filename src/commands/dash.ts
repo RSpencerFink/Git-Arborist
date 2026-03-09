@@ -1,11 +1,7 @@
-import type { GwContext } from "../core/context.ts";
-import {
-  type BranchStatus,
-  getBranchStatus,
-  listWorktrees,
-} from "../core/git.ts";
-import { exec } from "../utils/exec.ts";
-import { ensureShellIntegrationActive } from "./shellSetup.ts";
+import type { ArboristContext } from '../core/context.ts';
+import { type BranchStatus, getBranchStatus, listWorktrees } from '../core/git.ts';
+import { exec } from '../utils/exec.ts';
+import { ensureShellIntegrationActive } from './shellSetup.ts';
 
 interface DashWorktreeJson {
   path: string;
@@ -19,15 +15,9 @@ interface DashWorktreeJson {
   graphite: { stack?: string; position?: string } | null;
 }
 
-export async function dashJson(
-  ctx: GwContext,
-  args: string[],
-): Promise<DashWorktreeJson[]> {
-  const showPr =
-    args.includes("--pr") || ctx.config.plugins.github?.enabled === true;
-  const showGraphite =
-    args.includes("--graphite") ||
-    ctx.config.plugins.graphite?.enabled === true;
+export async function dashJson(ctx: ArboristContext, args: string[]): Promise<DashWorktreeJson[]> {
+  const showPr = args.includes('--pr') || ctx.config.plugins.github?.enabled === true;
+  const showGraphite = args.includes('--graphite') || ctx.config.plugins.graphite?.enabled === true;
 
   const wts = await listWorktrees(ctx.gitRoot);
   const nonBare = wts.filter((wt) => !wt.isBare);
@@ -42,18 +32,11 @@ export async function dashJson(
         // skip
       }
 
-      let pr: DashWorktreeJson["pr"] = null;
+      let pr: DashWorktreeJson['pr'] = null;
       if (showPr && wt.branch && !wt.isMain) {
         try {
           const result = await exec(
-            [
-              "gh",
-              "pr",
-              "view",
-              wt.branch,
-              "--json",
-              "number,state,url,statusCheckRollup",
-            ],
+            ['gh', 'pr', 'view', wt.branch, '--json', 'number,state,url,statusCheckRollup'],
             { cwd: ctx.gitRoot },
           );
           if (result.exitCode === 0) {
@@ -61,14 +44,11 @@ export async function dashJson(
             let ciStatus: string | undefined;
             if (data.statusCheckRollup?.length > 0) {
               const states = data.statusCheckRollup.map(
-                (c: { conclusion?: string; status?: string }) =>
-                  c.conclusion ?? c.status,
+                (c: { conclusion?: string; status?: string }) => c.conclusion ?? c.status,
               );
-              if (states.every((s: string) => s === "SUCCESS"))
-                ciStatus = "SUCCESS";
-              else if (states.some((s: string) => s === "FAILURE"))
-                ciStatus = "FAILURE";
-              else ciStatus = "PENDING";
+              if (states.every((s: string) => s === 'SUCCESS')) ciStatus = 'SUCCESS';
+              else if (states.some((s: string) => s === 'FAILURE')) ciStatus = 'FAILURE';
+              else ciStatus = 'PENDING';
             }
             pr = {
               number: data.number,
@@ -82,25 +62,21 @@ export async function dashJson(
         }
       }
 
-      let graphite: DashWorktreeJson["graphite"] = null;
+      let graphite: DashWorktreeJson['graphite'] = null;
       if (showGraphite && wt.branch) {
         try {
-          const result = await exec(["gt", "log", "short", "--json"], {
+          const result = await exec(['gt', 'log', 'short', '--json'], {
             cwd: wt.path,
           });
           if (result.exitCode === 0) {
             const data = JSON.parse(result.stdout);
             if (Array.isArray(data)) {
-              const entry = data.find(
-                (e: { branch?: string }) => e.branch === wt.branch,
-              );
+              const entry = data.find((e: { branch?: string }) => e.branch === wt.branch);
               if (entry) {
                 graphite = {
                   stack: entry.stack ?? undefined,
                   position:
-                    entry.index !== undefined
-                      ? `${entry.index + 1}/${data.length}`
-                      : undefined,
+                    entry.index !== undefined ? `${entry.index + 1}/${data.length}` : undefined,
                 };
               }
             }
@@ -116,8 +92,7 @@ export async function dashJson(
         head: wt.head,
         isMain: wt.isMain,
         isDetached: wt.isDetached,
-        isCurrent:
-          wt.path === currentPath || currentPath.startsWith(`${wt.path}/`),
+        isCurrent: wt.path === currentPath || currentPath.startsWith(`${wt.path}/`),
         status,
         pr,
         graphite,
@@ -126,15 +101,12 @@ export async function dashJson(
   );
 }
 
-export async function dash(ctx: GwContext, args: string[]): Promise<void> {
+export async function dash(ctx: ArboristContext, args: string[]): Promise<void> {
   await ensureShellIntegrationActive();
 
-  const showPr =
-    args.includes("--pr") || ctx.config.plugins.github?.enabled === true;
-  const showGraphite =
-    args.includes("--graphite") ||
-    ctx.config.plugins.graphite?.enabled === true;
+  const showPr = args.includes('--pr') || ctx.config.plugins.github?.enabled === true;
+  const showGraphite = args.includes('--graphite') || ctx.config.plugins.graphite?.enabled === true;
 
-  const { renderDashboard } = await import("../tui/dashboard.tsx");
+  const { renderDashboard } = await import('../tui/dashboard.tsx');
   renderDashboard(ctx, { showPr, showGraphite });
 }

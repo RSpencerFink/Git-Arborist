@@ -1,33 +1,31 @@
 export function generateShellInit(shell: string): string {
   switch (shell) {
-    case "zsh":
+    case 'zsh':
       return ZSH_INIT;
-    case "bash":
+    case 'bash':
       return BASH_INIT;
-    case "fish":
+    case 'fish':
       return FISH_INIT;
     default:
-      throw new Error(
-        `Unsupported shell: ${shell}. Supported: zsh, bash, fish`,
-      );
+      throw new Error(`Unsupported shell: ${shell}. Supported: zsh, bash, fish`);
   }
 }
 
-const ZSH_INIT = `# gw shell integration for zsh
-# Add to .zshrc: eval "$(gw shell-init zsh)"
-gw() {
+const ZSH_INIT = `# arb shell integration for zsh
+# Add to .zshrc: eval "$(arb shell-init zsh)"
+arb() {
   if [ "$1" = "go" ] || [ "$1" = "main" ]; then
     local dir
-    dir=$(command gw "$@" --print-path 2>/dev/null)
+    dir=$(command arb "$@" --print-path 2>/dev/null)
     if [ $? -eq 0 ] && [ -n "$dir" ] && [ -d "$dir" ]; then
       cd "$dir"
     else
-      command gw "$@"
+      command arb "$@"
     fi
   elif [ "$1" = "dash" ]; then
-    local cd_file="/tmp/gw-dash-cd-$$"
+    local cd_file="/tmp/arb-dash-cd-$$"
     rm -f "$cd_file"
-    GW_CD_FILE="$cd_file" command gw "$@"
+    ARB_CD_FILE="$cd_file" command arb "$@"
     if [ -f "$cd_file" ]; then
       local dir
       dir=$(cat "$cd_file")
@@ -37,13 +35,13 @@ gw() {
       fi
     fi
   else
-    command gw "$@"
+    command arb "$@"
   fi
 }
 
 # Prompt helper: shows worktree name when inside a linked worktree.
-# Usage: PS1="\$(gw_ps1)$PS1" or add to your prompt theme.
-gw_ps1() {
+# Usage: PS1="\$(arb_ps1)$PS1" or add to your prompt theme.
+arb_ps1() {
   local git_dir common_dir branch
   git_dir=$(git rev-parse --git-dir 2>/dev/null) || return
   common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || return
@@ -54,21 +52,21 @@ gw_ps1() {
 }
 `;
 
-const BASH_INIT = `# gw shell integration for bash
-# Add to .bashrc: eval "$(gw shell-init bash)"
-gw() {
+const BASH_INIT = `# arb shell integration for bash
+# Add to .bashrc: eval "$(arb shell-init bash)"
+arb() {
   if [ "$1" = "go" ] || [ "$1" = "main" ]; then
     local dir
-    dir=$(command gw "$@" --print-path 2>/dev/null)
+    dir=$(command arb "$@" --print-path 2>/dev/null)
     if [ $? -eq 0 ] && [ -n "$dir" ] && [ -d "$dir" ]; then
       cd "$dir"
     else
-      command gw "$@"
+      command arb "$@"
     fi
   elif [ "$1" = "dash" ]; then
-    local cd_file="/tmp/gw-dash-cd-$$"
+    local cd_file="/tmp/arb-dash-cd-$$"
     rm -f "$cd_file"
-    GW_CD_FILE="$cd_file" command gw "$@"
+    ARB_CD_FILE="$cd_file" command arb "$@"
     if [ -f "$cd_file" ]; then
       local dir
       dir=$(cat "$cd_file")
@@ -78,13 +76,13 @@ gw() {
       fi
     fi
   else
-    command gw "$@"
+    command arb "$@"
   fi
 }
 
 # Prompt helper: shows worktree name when inside a linked worktree.
-# Usage: PS1="\$(gw_ps1)$PS1" or add to your prompt theme.
-gw_ps1() {
+# Usage: PS1="\$(arb_ps1)$PS1" or add to your prompt theme.
+arb_ps1() {
   local git_dir common_dir branch
   git_dir=$(git rev-parse --git-dir 2>/dev/null) || return
   common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || return
@@ -94,20 +92,20 @@ gw_ps1() {
 }
 `;
 
-const FISH_INIT = `# gw shell integration for fish
-# Add to config.fish: gw shell-init fish | source
-function gw
+const FISH_INIT = `# arb shell integration for fish
+# Add to config.fish: arb shell-init fish | source
+function arb
   if test "$argv[1]" = "go" -o "$argv[1]" = "main"
-    set -l dir (command gw $argv --print-path 2>/dev/null)
+    set -l dir (command arb $argv --print-path 2>/dev/null)
     if test $status -eq 0 -a -n "$dir" -a -d "$dir"
       cd "$dir"
     else
-      command gw $argv
+      command arb $argv
     end
   else if test "$argv[1]" = "dash"
-    set -l cd_file "/tmp/gw-dash-cd-$fish_pid"
+    set -l cd_file "/tmp/arb-dash-cd-$fish_pid"
     rm -f "$cd_file"
-    GW_CD_FILE="$cd_file" command gw $argv
+    ARB_CD_FILE="$cd_file" command arb $argv
     if test -f "$cd_file"
       set -l dir (cat "$cd_file")
       rm -f "$cd_file"
@@ -116,13 +114,13 @@ function gw
       end
     end
   else
-    command gw $argv
+    command arb $argv
   end
 end
 
 # Prompt helper: shows worktree name when inside a linked worktree.
-# Usage: add (gw_ps1) to your fish_prompt function.
-function gw_ps1
+# Usage: add (arb_ps1) to your fish_prompt function.
+function arb_ps1
   set -l git_dir (git rev-parse --git-dir 2>/dev/null); or return
   set -l common_dir (git rev-parse --git-common-dir 2>/dev/null); or return
   test "$git_dir" = "$common_dir"; and return

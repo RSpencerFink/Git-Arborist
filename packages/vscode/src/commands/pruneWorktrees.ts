@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
-import { gw, handleGwError } from "../cli/gwRunner";
+import { arb, handleArboristError } from "../cli/gwRunner";
 
 export async function pruneWorktrees(): Promise<void> {
   try {
-    const dryRun = await gw.pruneDryRun();
+    const dryRun = await arb.pruneDryRun();
 
     if (!dryRun.candidates || dryRun.candidates.length === 0) {
       vscode.window.showInformationMessage(
@@ -41,7 +41,7 @@ export async function pruneWorktrees(): Promise<void> {
         title: "Pruning worktrees...",
       },
       async () => {
-        const result = await gw.prune();
+        const result = await arb.prune();
         const removed = result.removed?.length ?? 0;
         const failed = result.failed?.length ?? 0;
         let msg = `Pruned ${removed} worktree${removed !== 1 ? "s" : ""}`;
@@ -50,6 +50,6 @@ export async function pruneWorktrees(): Promise<void> {
       },
     );
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }

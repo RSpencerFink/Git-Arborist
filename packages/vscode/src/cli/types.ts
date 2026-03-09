@@ -71,7 +71,7 @@ export interface PluginItem {
   builtin: boolean;
 }
 
-export interface GwConfig {
+export interface ArboristConfig {
   worktree_path: string;
   editor?: string;
   setup: {
@@ -82,14 +82,14 @@ export interface GwConfig {
   plugins: Record<string, { enabled: boolean; [key: string]: unknown }>;
 }
 
-export interface GwError {
+export interface ArboristError {
   error: string;
   code: string;
 }
 
-export type GwResult<T> = T | GwError;
+export type ArboristResult<T> = T | ArboristError;
 
-export function isGwError(value: unknown): value is GwError {
+export function isArboristError(value: unknown): value is ArboristError {
   return (
     typeof value === "object" &&
     value !== null &&

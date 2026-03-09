@@ -1,5 +1,5 @@
 import { basename } from 'node:path';
-import type { GwContext } from './context.ts';
+import type { ArboristContext } from './context.ts';
 import {
   type WorktreeInfo,
   getDefaultBranch,
@@ -12,7 +12,7 @@ import { resolveWorktreePath } from './paths.ts';
 export type { WorktreeInfo };
 
 export async function createWorktree(
-  ctx: GwContext,
+  ctx: ArboristContext,
   branch: string,
   options?: { createBranch?: boolean; base?: string },
 ): Promise<WorktreeInfo> {
@@ -35,7 +35,7 @@ export async function createWorktree(
 }
 
 export async function deleteWorktree(
-  ctx: GwContext,
+  ctx: ArboristContext,
   nameOrPath: string,
   options?: { force?: boolean; deleteBranch?: boolean },
 ): Promise<{ branch: string; path: string }> {
@@ -55,11 +55,11 @@ export async function deleteWorktree(
   return { branch: wt.branch, path: wt.path };
 }
 
-export async function getWorktrees(ctx: GwContext): Promise<WorktreeInfo[]> {
+export async function getWorktrees(ctx: ArboristContext): Promise<WorktreeInfo[]> {
   return gitListWorktrees(ctx.gitRoot);
 }
 
-export async function getMainWorktree(ctx: GwContext): Promise<WorktreeInfo | undefined> {
+export async function getMainWorktree(ctx: ArboristContext): Promise<WorktreeInfo | undefined> {
   const worktrees = await gitListWorktrees(ctx.gitRoot);
   return worktrees.find((wt) => wt.isMain);
 }
@@ -89,7 +89,7 @@ export function findWorktree(
   return contains;
 }
 
-export async function getCurrentWorktree(ctx: GwContext): Promise<WorktreeInfo | undefined> {
+export async function getCurrentWorktree(ctx: ArboristContext): Promise<WorktreeInfo | undefined> {
   const worktrees = await gitListWorktrees(ctx.gitRoot);
   return worktrees.find((wt) => wt.path === ctx.cwd || ctx.cwd.startsWith(`${wt.path}/`));
 }

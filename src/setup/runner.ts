@@ -1,12 +1,12 @@
 import { copyFileSync, existsSync, mkdirSync, symlinkSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { c } from '../utils/color.ts';
 import { exec } from '../utils/exec.ts';
 import { log } from '../utils/logger.ts';
 
 export async function runSetupHooks(
-  ctx: GwContext,
+  ctx: ArboristContext,
   worktreePath: string,
   mainWorktreePath?: string,
 ): Promise<void> {

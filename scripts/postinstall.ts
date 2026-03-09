@@ -8,9 +8,9 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 const SHELL_CONFIGS: Record<string, { rc: string; line: string }> = {
-  zsh: { rc: '.zshrc', line: 'eval "$(gw shell-init zsh)"' },
-  bash: { rc: '.bashrc', line: 'eval "$(gw shell-init bash)"' },
-  fish: { rc: '.config/fish/config.fish', line: 'gw shell-init fish | source' },
+  zsh: { rc: '.zshrc', line: 'eval "$(arb shell-init zsh)"' },
+  bash: { rc: '.bashrc', line: 'eval "$(arb shell-init bash)"' },
+  fish: { rc: '.config/fish/config.fish', line: 'arb shell-init fish | source' },
 };
 
 function detectShell(): string {
@@ -29,15 +29,15 @@ const rcPath = join(homedir(), config.rc);
 
 if (existsSync(rcPath)) {
   const contents = readFileSync(rcPath, 'utf-8');
-  if (contents.includes('gw shell-init')) {
+  if (contents.includes('arb shell-init')) {
     process.exit(0);
   }
 }
 
 try {
-  appendFileSync(rcPath, `\n# gw shell integration\n${config.line}\n`);
-  console.log(`\x1b[32m✓\x1b[0m gw: Added shell integration to ~/${config.rc}`);
+  appendFileSync(rcPath, `\n# arb shell integration\n${config.line}\n`);
+  console.log(`\x1b[32m✓\x1b[0m arb: Added shell integration to ~/${config.rc}`);
   console.log(`  Restart your shell or run: source ~/${config.rc}`);
 } catch {
-  // Silent fail — user can run `gw shell-setup` manually
+  // Silent fail — user can run `arb shell-setup` manually
 }

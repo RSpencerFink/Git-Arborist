@@ -1,4 +1,4 @@
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { findWorktree, getWorktrees } from '../core/worktree.ts';
 import { log } from '../utils/logger.ts';
 import { ensureShellIntegration } from './shellSetup.ts';
@@ -23,7 +23,7 @@ export function parseGoArgs(args: string[]): GoArgs {
   return { name, printPath };
 }
 
-export async function go(ctx: GwContext, args: string[]): Promise<void> {
+export async function go(ctx: ArboristContext, args: string[]): Promise<void> {
   const { name, printPath } = parseGoArgs(args);
 
   // Skip check when called from shell wrapper (--print-path)

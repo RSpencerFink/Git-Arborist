@@ -5,7 +5,7 @@ dist/
 .DS_Store
 
 # Compiled binary
-/gw
+/arb
 *.bun-build
 
 # Auto-generated

@@ -1,15 +1,15 @@
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { findWorktree, getWorktrees } from '../core/worktree.ts';
 import { c } from '../utils/color.ts';
 import { isInsideTmux } from '../utils/detect.ts';
 import { exec } from '../utils/exec.ts';
 import { log } from '../utils/logger.ts';
 
-export async function tmux(ctx: GwContext, args: string[]): Promise<void> {
+export async function tmux(ctx: ArboristContext, args: string[]): Promise<void> {
   const name = args[0];
 
   if (!name) {
-    throw new Error('Worktree name required. Usage: gw tmux <name>');
+    throw new Error('Worktree name required. Usage: arb tmux <name>');
   }
 
   const worktrees = await getWorktrees(ctx);
@@ -26,7 +26,7 @@ export async function tmux(ctx: GwContext, args: string[]): Promise<void> {
     log.success(`Opened tmux window: ${c.branch(windowName)}`);
   } else {
     // Create or attach to a session
-    const sessionName = `gw-${windowName}`;
+    const sessionName = `arb-${windowName}`;
     await exec(['tmux', 'new-session', '-d', '-s', sessionName, '-c', wt.path]);
     log.success(`Created tmux session: ${c.branch(sessionName)}`);
     log.dim(`  Attach with: tmux attach -t ${sessionName}`);

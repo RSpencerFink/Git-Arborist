@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# gw installer — downloads a pre-built binary from GitHub Releases
-# Usage: curl -fsSL https://raw.githubusercontent.com/gw-cli/gw/main/install.sh | bash
+# arb installer — downloads a pre-built binary from GitHub Releases
+# Usage: curl -fsSL https://raw.githubusercontent.com/git-arborist/git-arborist/main/install.sh | bash
 
-REPO="gw-cli/gw"
-INSTALL_DIR="${GW_INSTALL_DIR:-/usr/local/bin}"
+REPO="git-arborist/git-arborist"
+INSTALL_DIR="${ARB_INSTALL_DIR:-/usr/local/bin}"
 FALLBACK_DIR="$HOME/.local/bin"
 
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
@@ -65,23 +65,23 @@ main() {
     error "Could not determine latest version. Pass a version as argument: bash install.sh 0.1.0"
   fi
 
-  local artifact="gw-${platform}"
+  local artifact="arb-${platform}"
   local base_url="https://github.com/${REPO}/releases/download/v${version}"
   local tmp
   tmp="$(mktemp -d)"
   trap 'rm -rf "$tmp"' EXIT
 
-  info "Downloading gw v${version} for ${platform}..."
-  download "${base_url}/${artifact}" "${tmp}/gw"
+  info "Downloading arb v${version} for ${platform}..."
+  download "${base_url}/${artifact}" "${tmp}/arb"
   download "${base_url}/${artifact}.sha256" "${tmp}/${artifact}.sha256"
 
   info "Verifying checksum..."
   local expected actual
   expected="$(awk '{print $1}' "${tmp}/${artifact}.sha256")"
   if command -v shasum &>/dev/null; then
-    actual="$(shasum -a 256 "${tmp}/gw" | awk '{print $1}')"
+    actual="$(shasum -a 256 "${tmp}/arb" | awk '{print $1}')"
   elif command -v sha256sum &>/dev/null; then
-    actual="$(sha256sum "${tmp}/gw" | awk '{print $1}')"
+    actual="$(sha256sum "${tmp}/arb" | awk '{print $1}')"
   else
     error "shasum or sha256sum is required for checksum verification"
   fi
@@ -90,7 +90,7 @@ main() {
     error "Checksum mismatch! Expected ${expected}, got ${actual}"
   fi
 
-  chmod +x "${tmp}/gw"
+  chmod +x "${tmp}/arb"
 
   # Install to preferred directory, falling back to ~/.local/bin
   local dest="$INSTALL_DIR"
@@ -104,9 +104,9 @@ main() {
     fi
   fi
 
-  mv "${tmp}/gw" "${dest}/gw"
+  mv "${tmp}/arb" "${dest}/arb"
 
-  info "Installed gw v${version} to ${dest}/gw"
+  info "Installed arb v${version} to ${dest}/arb"
 
   # Check if install dir is on PATH
   case ":${PATH}:" in
@@ -120,9 +120,9 @@ main() {
   esac
 
   echo ""
-  echo "  Shell integration (required for gw go / gw main):"
-  echo "    eval \"\$(gw shell-init zsh)\"   # add to ~/.zshrc"
-  echo "    eval \"\$(gw shell-init bash)\"  # add to ~/.bashrc"
+  echo "  Shell integration (required for arb go / arb main):"
+  echo "    eval \"\$(arb shell-init zsh)\"   # add to ~/.zshrc"
+  echo "    eval \"\$(arb shell-init bash)\"  # add to ~/.bashrc"
   echo ""
 }
 

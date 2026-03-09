@@ -1,6 +1,6 @@
-import type { GwPlugin } from '../types.ts';
+import type { ArboristPlugin } from '../types.ts';
 
-const gitPlugin: GwPlugin = {
+const gitPlugin: ArboristPlugin = {
   name: 'git',
   version: '1.0.0',
 };

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Cross-compiles gw for all supported platforms and generates SHA256 checksums.
+ * Cross-compiles arb for all supported platforms and generates SHA256 checksums.
  */
 import { resolve } from "node:path";
 import { mkdir } from "node:fs/promises";
@@ -10,10 +10,10 @@ const dist = resolve(root, "dist");
 const entrypoint = resolve(root, "src/index.ts");
 
 const targets = [
-  { bun: "bun-darwin-arm64", out: "gw-darwin-arm64" },
-  { bun: "bun-darwin-x64", out: "gw-darwin-x64" },
-  { bun: "bun-linux-arm64", out: "gw-linux-arm64" },
-  { bun: "bun-linux-x64", out: "gw-linux-x64" },
+  { bun: "bun-darwin-arm64", out: "arb-darwin-arm64" },
+  { bun: "bun-darwin-x64", out: "arb-darwin-x64" },
+  { bun: "bun-linux-arm64", out: "arb-linux-arm64" },
+  { bun: "bun-linux-x64", out: "arb-linux-x64" },
 ] as const;
 
 // Ensure version.ts is up to date

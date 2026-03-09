@@ -1,21 +1,21 @@
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import type { WorktreeInfo } from '../core/git.ts';
-import type { GwPlugin } from './types.ts';
+import type { ArboristPlugin } from './types.ts';
 
-type HookName = keyof NonNullable<GwPlugin['hooks']>;
+type HookName = keyof NonNullable<ArboristPlugin['hooks']>;
 
 export class HookRegistry {
-  private plugins: GwPlugin[] = [];
+  private plugins: ArboristPlugin[] = [];
 
-  register(plugin: GwPlugin): void {
+  register(plugin: ArboristPlugin): void {
     this.plugins.push(plugin);
   }
 
   async emit<K extends HookName>(
     hookName: K,
-    ctx: GwContext,
-    ...args: Parameters<NonNullable<NonNullable<GwPlugin['hooks']>[K]>> extends [
-      GwContext,
+    ctx: ArboristContext,
+    ...args: Parameters<NonNullable<NonNullable<ArboristPlugin['hooks']>[K]>> extends [
+      ArboristContext,
       ...infer Rest,
     ]
       ? Rest
@@ -29,7 +29,7 @@ export class HookRegistry {
     }
   }
 
-  getCommands(): GwPlugin['commands'] {
+  getCommands(): ArboristPlugin['commands'] {
     return this.plugins.flatMap((p) => p.commands ?? []);
   }
 }

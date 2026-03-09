@@ -1,16 +1,16 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { findWorktree, getMainWorktree, getWorktrees } from '../core/worktree.ts';
 import { runSetupHooks } from '../setup/runner.ts';
 import { c } from '../utils/color.ts';
 import { log } from '../utils/logger.ts';
 
-export async function setup(ctx: GwContext, args: string[]): Promise<void> {
+export async function setup(ctx: ArboristContext, args: string[]): Promise<void> {
   const name = args[0];
 
   if (!name) {
-    throw new Error('Worktree name required. Usage: gw setup <name>');
+    throw new Error('Worktree name required. Usage: arb setup <name>');
   }
 
   const worktrees = await getWorktrees(ctx);

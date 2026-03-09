@@ -1,14 +1,14 @@
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { findWorktree, getWorktrees } from '../core/worktree.ts';
 import { c } from '../utils/color.ts';
 import { exec } from '../utils/exec.ts';
 import { log } from '../utils/logger.ts';
 
-export async function open(ctx: GwContext, args: string[]): Promise<void> {
+export async function open(ctx: ArboristContext, args: string[]): Promise<void> {
   const name = args[0];
 
   if (!name) {
-    throw new Error('Worktree name required. Usage: gw open <name>');
+    throw new Error('Worktree name required. Usage: arb open <name>');
   }
 
   const worktrees = await getWorktrees(ctx);

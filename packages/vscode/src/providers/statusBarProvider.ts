@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { gw } from "../cli/gwRunner";
+import { arb } from "../cli/gwRunner";
 
 export class StatusBarProvider {
   private item: vscode.StatusBarItem;
@@ -10,10 +10,10 @@ export class StatusBarProvider {
       vscode.StatusBarAlignment.Left,
       100,
     );
-    this.item.command = "gw.switchWorktree";
+    this.item.command = "arborist.switchWorktree";
 
     const showStatusBar = vscode.workspace
-      .getConfiguration("gw")
+      .getConfiguration("arborist")
       .get<boolean>("showStatusBar", true);
 
     if (showStatusBar) {
@@ -24,7 +24,7 @@ export class StatusBarProvider {
 
   async refresh(): Promise<void> {
     try {
-      const result = await gw.which();
+      const result = await arb.which();
       if (result.current) {
         this.item.text = `$(git-branch) ${result.current} [wt]`;
         this.item.tooltip = "Click to switch worktree";
@@ -39,7 +39,7 @@ export class StatusBarProvider {
 
   private startAutoRefresh(): void {
     const interval = vscode.workspace
-      .getConfiguration("gw")
+      .getConfiguration("arborist")
       .get<number>("autoRefreshInterval", 10000);
     this.refreshTimer = setInterval(() => this.refresh(), interval);
   }

@@ -1,9 +1,9 @@
 import { isInsideTmux } from '../../utils/detect.ts';
 import { exec } from '../../utils/exec.ts';
 import { log } from '../../utils/logger.ts';
-import type { GwPlugin } from '../types.ts';
+import type { ArboristPlugin } from '../types.ts';
 
-const tmuxPlugin: GwPlugin = {
+const tmuxPlugin: ArboristPlugin = {
   name: 'tmux',
   version: '1.0.0',
   hooks: {

@@ -40,31 +40,31 @@ describe("worktree lifecycle", () => {
     });
   });
 
-  test("gw ls shows main worktree", async () => {
+  test("arb ls shows main worktree", async () => {
     const result = await gw("ls", TEST_DIR);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("main");
   });
 
-  test("gw add -b creates worktree", async () => {
+  test("arb add -b creates worktree", async () => {
     const result = await gw("add -b test-branch", TEST_DIR);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("Worktree created");
   });
 
-  test("gw ls shows new worktree", async () => {
+  test("arb ls shows new worktree", async () => {
     const result = await gw("ls", TEST_DIR);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("test-branch");
   });
 
-  test("gw go prints path", async () => {
+  test("arb go prints path", async () => {
     const result = await gw("go test-branch --print-path", TEST_DIR);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("test-branch");
   });
 
-  test("gw status shows table", async () => {
+  test("arb status shows table", async () => {
     const result = await gw("status", TEST_DIR);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("Branch");
@@ -72,13 +72,13 @@ describe("worktree lifecycle", () => {
     expect(result.stdout).toContain("test-branch");
   });
 
-  test("gw rm removes worktree", async () => {
+  test("arb rm removes worktree", async () => {
     const result = await gw("rm test-branch", TEST_DIR);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("Removed");
   });
 
-  test("gw ls no longer shows removed worktree", async () => {
+  test("arb ls no longer shows removed worktree", async () => {
     const result = await gw("ls", TEST_DIR);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).not.toContain("test-branch");

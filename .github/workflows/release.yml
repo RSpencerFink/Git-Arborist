@@ -13,16 +13,16 @@ jobs:
       matrix:
         include:
           - target: bun-darwin-arm64
-            artifact: gw-darwin-arm64
+            artifact: arb-darwin-arm64
             os: macos-latest
           - target: bun-darwin-x64
-            artifact: gw-darwin-x64
+            artifact: arb-darwin-x64
             os: macos-latest
           - target: bun-linux-arm64
-            artifact: gw-linux-arm64
+            artifact: arb-linux-arm64
             os: ubuntu-latest
           - target: bun-linux-x64
-            artifact: gw-linux-x64
+            artifact: arb-linux-x64
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -68,7 +68,7 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            artifacts/gw-*
+            artifacts/arb-*
 
   publish-npm:
     needs: build
@@ -113,10 +113,10 @@ jobs:
       - name: Read checksums
         id: checksums
         run: |
-          echo "darwin_arm64=$(awk '{print $1}' artifacts/gw-darwin-arm64.sha256)" >> "$GITHUB_OUTPUT"
-          echo "darwin_x64=$(awk '{print $1}' artifacts/gw-darwin-x64.sha256)" >> "$GITHUB_OUTPUT"
-          echo "linux_arm64=$(awk '{print $1}' artifacts/gw-linux-arm64.sha256)" >> "$GITHUB_OUTPUT"
-          echo "linux_x64=$(awk '{print $1}' artifacts/gw-linux-x64.sha256)" >> "$GITHUB_OUTPUT"
+          echo "darwin_arm64=$(awk '{print $1}' artifacts/arb-darwin-arm64.sha256)" >> "$GITHUB_OUTPUT"
+          echo "darwin_x64=$(awk '{print $1}' artifacts/arb-darwin-x64.sha256)" >> "$GITHUB_OUTPUT"
+          echo "linux_arm64=$(awk '{print $1}' artifacts/arb-linux-arm64.sha256)" >> "$GITHUB_OUTPUT"
+          echo "linux_x64=$(awk '{print $1}' artifacts/arb-linux-x64.sha256)" >> "$GITHUB_OUTPUT"
 
       - name: Generate formula
         run: |
@@ -126,16 +126,16 @@ jobs:
             ${{ steps.checksums.outputs.darwin_x64 }} \
             ${{ steps.checksums.outputs.linux_arm64 }} \
             ${{ steps.checksums.outputs.linux_x64 }} \
-            > gw.rb
+            > arb.rb
 
       - name: Push to Homebrew tap
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.HOMEBREW_TAP_TOKEN }}
         with:
-          source_file: gw.rb
-          destination_repo: gw-cli/homebrew-gw
+          source_file: arb.rb
+          destination_repo: git-arborist/homebrew-git-arborist
           destination_folder: Formula
           user_email: github-actions[bot]@users.noreply.github.com
           user_name: github-actions[bot]
-          commit_message: "Update gw to ${{ steps.version.outputs.version }}"
+          commit_message: "Update arb to ${{ steps.version.outputs.version }}"

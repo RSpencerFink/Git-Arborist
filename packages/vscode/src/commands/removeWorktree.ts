@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
-import { gw, handleGwError } from "../cli/gwRunner";
+import { arb, handleArboristError } from "../cli/gwRunner";
 import type { WorktreeTreeItem } from "../providers/worktreeTreeItem";
 
 interface WorktreeIdentifier {
-  name: string; // identifier to pass to gw rm (branch or path)
+  name: string; // identifier to pass to arb rm (branch or path)
   displayName: string; // human-readable name for UI
 }
 
@@ -35,7 +35,7 @@ export async function removeWorktree(item?: unknown): Promise<void> {
     let target: WorktreeIdentifier | undefined = extractWorktree(item);
 
     if (!target) {
-      const worktrees = await gw.ls();
+      const worktrees = await arb.ls();
       const removable = worktrees.filter((wt) => !wt.isMain);
 
       if (removable.length === 0) {
@@ -74,7 +74,7 @@ export async function removeWorktree(item?: unknown): Promise<void> {
         title: `Removing worktree ${target.displayName}...`,
       },
       async () => {
-        const result = await gw.rm(target.name, flags);
+        const result = await arb.rm(target.name, flags);
         if (result.deleted_branch) {
           vscode.window.showInformationMessage(`Removed worktree and deleted branch ${result.deleted_branch}`);
         } else if (result.branch_delete_error) {
@@ -85,6 +85,6 @@ export async function removeWorktree(item?: unknown): Promise<void> {
       },
     );
   } catch (err) {
-    await handleGwError(err);
+    await handleArboristError(err);
   }
 }

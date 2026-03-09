@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 
 const execFileAsync = promisify(execFile);
 
-/** Augmented PATH so bun (and gw) are reachable from GUI-launched editors. */
+/** Augmented PATH so bun (and arb) are reachable from GUI-launched editors. */
 export function getAugmentedEnv(): NodeJS.ProcessEnv {
   const home = homedir();
   const extraDirs = [
@@ -28,11 +28,11 @@ const MIN_VERSION = "0.1.9";
 
 let cachedPath: string | undefined;
 
-export async function getGwBinaryPath(): Promise<string> {
+export async function getArboristBinaryPath(): Promise<string> {
   if (cachedPath) return cachedPath;
 
   const configPath = vscode.workspace
-    .getConfiguration("gw")
+    .getConfiguration("arborist")
     .get<string>("binaryPath");
 
   if (configPath) {
@@ -47,7 +47,7 @@ export async function getGwBinaryPath(): Promise<string> {
     return detected;
   }
 
-  throw new GwBinaryNotFoundError();
+  throw new ArboristBinaryNotFoundError();
 }
 
 export function clearBinaryCache(): void {
@@ -57,7 +57,7 @@ export function clearBinaryCache(): void {
 async function detectBinary(): Promise<string | undefined> {
   // Try `which` first (works when PATH is inherited)
   try {
-    const { stdout } = await execFileAsync("which", ["gw"], {
+    const { stdout } = await execFileAsync("which", ["arb"], {
       env: getAugmentedEnv(),
     });
     const found = stdout.trim();
@@ -72,10 +72,10 @@ async function detectBinary(): Promise<string | undefined> {
   // GUI apps on macOS don't inherit shell PATH — check common locations
   const home = homedir();
   const candidates = [
-    join(home, ".bun", "bin", "gw"),
-    "/usr/local/bin/gw",
-    join(home, ".local", "bin", "gw"),
-    "/opt/homebrew/bin/gw",
+    join(home, ".bun", "bin", "arb"),
+    "/usr/local/bin/arb",
+    join(home, ".local", "bin", "arb"),
+    "/opt/homebrew/bin/arb",
   ];
 
   for (const candidate of candidates) {
@@ -100,16 +100,16 @@ async function validateBinary(path: string): Promise<void> {
     const data = JSON.parse(stdout.trim());
     const version = data.version;
     if (!version) {
-      throw new Error("Could not determine gw version");
+      throw new Error("Could not determine arb version");
     }
     if (compareVersions(version, MIN_VERSION) < 0) {
       throw new Error(
-        `gw version ${version} is too old. Minimum required: ${MIN_VERSION}`,
+        `arb version ${version} is too old. Minimum required: ${MIN_VERSION}`,
       );
     }
   } catch (err) {
     if (err instanceof Error && err.message.includes("too old")) throw err;
-    throw new Error(`Invalid gw binary at ${path}: ${(err as Error).message}`);
+    throw new Error(`Invalid arb binary at ${path}: ${(err as Error).message}`);
   }
 }
 
@@ -124,9 +124,9 @@ function compareVersions(a: string, b: string): number {
   return 0;
 }
 
-export class GwBinaryNotFoundError extends Error {
+export class ArboristBinaryNotFoundError extends Error {
   constructor() {
-    super("gw binary not found. Install it with: bun add -g git-arborist");
-    this.name = "GwBinaryNotFoundError";
+    super("arb binary not found. Install it with: bun add -g git-arborist");
+    this.name = "ArboristBinaryNotFoundError";
   }
 }

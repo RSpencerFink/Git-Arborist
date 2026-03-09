@@ -1,14 +1,14 @@
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { findWorktree, getWorktrees } from '../core/worktree.ts';
 import { c } from '../utils/color.ts';
 import { execOrThrow } from '../utils/exec.ts';
 import { log } from '../utils/logger.ts';
 
-export async function clean(ctx: GwContext, args: string[]): Promise<void> {
+export async function clean(ctx: ArboristContext, args: string[]): Promise<void> {
   const name = args[0];
 
   if (!name) {
-    throw new Error('Worktree name required. Usage: gw clean <name>');
+    throw new Error('Worktree name required. Usage: arb clean <name>');
   }
 
   const worktrees = await getWorktrees(ctx);

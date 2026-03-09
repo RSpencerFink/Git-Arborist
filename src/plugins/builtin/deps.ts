@@ -3,9 +3,9 @@ import { join } from 'node:path';
 import { detectPackageManager } from '../../utils/detect.ts';
 import { exec } from '../../utils/exec.ts';
 import { log } from '../../utils/logger.ts';
-import type { GwPlugin } from '../types.ts';
+import type { ArboristPlugin } from '../types.ts';
 
-const depsPlugin: GwPlugin = {
+const depsPlugin: ArboristPlugin = {
   name: 'deps',
   version: '1.0.0',
   hooks: {

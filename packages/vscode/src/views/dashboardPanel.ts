@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { gw, handleGwError } from "../cli/gwRunner";
+import { arb, handleArboristError } from "../cli/gwRunner";
 import type { DashWorktree } from "../cli/types";
 
 export class DashboardPanel {
@@ -17,7 +17,7 @@ export class DashboardPanel {
       async (msg) => {
         if (msg.type === "switch") {
           const behavior = vscode.workspace
-            .getConfiguration("gw")
+            .getConfiguration("arborist")
             .get<string>("switchBehavior", "newWindow");
           await vscode.commands.executeCommand(
             "vscode.openFolder",
@@ -43,7 +43,7 @@ export class DashboardPanel {
     }
 
     const panel = vscode.window.createWebviewPanel(
-      "gw.dashboard",
+      "arborist.dashboard",
       "Git Arborist Dashboard",
       vscode.ViewColumn.One,
       { enableScripts: true, retainContextWhenHidden: true },
@@ -55,16 +55,16 @@ export class DashboardPanel {
 
   private async refresh(): Promise<void> {
     try {
-      const data = await gw.dash();
+      const data = await arb.dash();
       this.panel.webview.postMessage({ type: "data", worktrees: data });
     } catch (err) {
-      await handleGwError(err);
+      await handleArboristError(err);
     }
   }
 
   private startAutoRefresh(): void {
     const interval = vscode.workspace
-      .getConfiguration("gw")
+      .getConfiguration("arborist")
       .get<number>("dashboardRefreshInterval", 5000);
     this.refreshTimer = setInterval(() => this.refresh(), interval);
   }
@@ -264,8 +264,8 @@ export function getDashboardHtml(): string {
         let remote = '';
         if (wt.status) {
           const parts = [];
-          if (wt.status.ahead > 0) parts.push('<span class="ahead">↑' + wt.status.ahead + '</span>');
-          if (wt.status.behind > 0) parts.push('<span class="behind">↓' + wt.status.behind + '</span>');
+          if (wt.status.ahead > 0) parts.push('<span class="ahead">\u2191' + wt.status.ahead + '</span>');
+          if (wt.status.behind > 0) parts.push('<span class="behind">\u2193' + wt.status.behind + '</span>');
           remote = parts.length > 0 ? parts.join(' ') : '<span class="clean">up to date</span>';
         }
         tr.innerHTML += '<td>' + remote + '</td>';

@@ -1,9 +1,9 @@
 {
-  "name": "gw-worktrees",
+  "name": "arborist-worktrees",
   "displayName": "Git Arborist",
-  "description": "Manage git worktrees with gw (git-arborist) directly from VS Code",
+  "description": "Manage git worktrees with arb (git-arborist) directly from VS Code",
   "version": "0.1.0",
-  "publisher": "gw-cli",
+  "publisher": "git-arborist",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
@@ -16,85 +16,85 @@
     "git",
     "worktree",
     "worktrees",
-    "gw",
+    "arb",
     "git-arborist"
   ],
   "activationEvents": [
-    "workspaceContains:.gw.toml",
+    "workspaceContains:.arborist.toml",
     "workspaceContains:.git"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "gw.addWorktree",
+        "command": "arborist.addWorktree",
         "title": "Git Arborist: Add Worktree",
         "icon": "$(add)"
       },
       {
-        "command": "gw.removeWorktree",
+        "command": "arborist.removeWorktree",
         "title": "Git Arborist: Remove Worktree",
         "icon": "$(trash)"
       },
       {
-        "command": "gw.switchWorktree",
+        "command": "arborist.switchWorktree",
         "title": "Git Arborist: Switch Worktree",
         "icon": "$(arrow-swap)"
       },
       {
-        "command": "gw.switchToMain",
+        "command": "arborist.switchToMain",
         "title": "Git Arborist: Switch to Main Worktree"
       },
       {
-        "command": "gw.pruneWorktrees",
+        "command": "arborist.pruneWorktrees",
         "title": "Git Arborist: Prune Merged Worktrees",
         "icon": "$(git-pull-request-closed)"
       },
       {
-        "command": "gw.cleanWorktree",
+        "command": "arborist.cleanWorktree",
         "title": "Git Arborist: Clean Worktree"
       },
       {
-        "command": "gw.garbageCollect",
+        "command": "arborist.garbageCollect",
         "title": "Git Arborist: Garbage Collect"
       },
       {
-        "command": "gw.cloneRepo",
+        "command": "arborist.cloneRepo",
         "title": "Git Arborist: Clone Repository"
       },
       {
-        "command": "gw.initConfig",
+        "command": "arborist.initConfig",
         "title": "Git Arborist: Initialize Config"
       },
       {
-        "command": "gw.runSetup",
+        "command": "arborist.runSetup",
         "title": "Git Arborist: Run Setup Hooks"
       },
       {
-        "command": "gw.runInWorktree",
+        "command": "arborist.runInWorktree",
         "title": "Git Arborist: Run Command in Worktree"
       },
       {
-        "command": "gw.openDashboard",
+        "command": "arborist.openDashboard",
         "title": "Git Arborist: Open Dashboard",
         "icon": "$(dashboard)"
       },
       {
-        "command": "gw.editConfig",
+        "command": "arborist.editConfig",
         "title": "Git Arborist: Edit Config"
       },
       {
-        "command": "gw.refreshWorktrees",
+        "command": "arborist.refreshWorktrees",
         "title": "Git Arborist: Refresh Worktrees",
         "icon": "$(refresh)"
       },
       {
-        "command": "gw.openWorktreeInNewWindow",
+        "command": "arborist.openWorktreeInNewWindow",
         "title": "Open in New Window",
         "icon": "$(window)"
       },
       {
-        "command": "gw.setupWorktree",
+        "command": "arborist.setupWorktree",
         "title": "Run Setup",
         "icon": "$(tools)"
       }
@@ -102,20 +102,20 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "gw-worktrees",
+          "id": "arborist-worktrees",
           "title": "Git Arborist",
           "icon": "media/icons/trees.svg"
         }
       ]
     },
     "views": {
-      "gw-worktrees": [
+      "arborist-worktrees": [
         {
-          "id": "gw.worktreeView",
+          "id": "arborist.worktreeView",
           "name": "Worktrees"
         },
         {
-          "id": "gw.pluginView",
+          "id": "arborist.pluginView",
           "name": "Plugins"
         }
       ]
@@ -123,55 +123,55 @@
     "menus": {
       "view/title": [
         {
-          "command": "gw.addWorktree",
-          "when": "view == gw.worktreeView",
+          "command": "arborist.addWorktree",
+          "when": "view == arborist.worktreeView",
           "group": "navigation@1"
         },
         {
-          "command": "gw.refreshWorktrees",
-          "when": "view == gw.worktreeView",
+          "command": "arborist.refreshWorktrees",
+          "when": "view == arborist.worktreeView",
           "group": "navigation@2"
         },
         {
-          "command": "gw.openDashboard",
-          "when": "view == gw.worktreeView",
+          "command": "arborist.openDashboard",
+          "when": "view == arborist.worktreeView",
           "group": "navigation@3"
         },
         {
-          "command": "gw.pruneWorktrees",
-          "when": "view == gw.worktreeView",
+          "command": "arborist.pruneWorktrees",
+          "when": "view == arborist.worktreeView",
           "group": "navigation@4"
         }
       ],
       "view/item/context": [
         {
-          "command": "gw.switchWorktree",
-          "when": "view == gw.worktreeView && viewItem == worktree",
+          "command": "arborist.switchWorktree",
+          "when": "view == arborist.worktreeView && viewItem == worktree",
           "group": "inline@1"
         },
         {
-          "command": "gw.openWorktreeInNewWindow",
-          "when": "view == gw.worktreeView && viewItem == worktree",
+          "command": "arborist.openWorktreeInNewWindow",
+          "when": "view == arborist.worktreeView && viewItem == worktree",
           "group": "inline@2"
         },
         {
-          "command": "gw.removeWorktree",
-          "when": "view == gw.worktreeView && viewItem == worktree",
+          "command": "arborist.removeWorktree",
+          "when": "view == arborist.worktreeView && viewItem == worktree",
           "group": "inline@3"
         },
         {
-          "command": "gw.removeWorktree",
-          "when": "view == gw.worktreeView && viewItem == worktree",
+          "command": "arborist.removeWorktree",
+          "when": "view == arborist.worktreeView && viewItem == worktree",
           "group": "context@1"
         },
         {
-          "command": "gw.setupWorktree",
-          "when": "view == gw.worktreeView && viewItem == worktree",
+          "command": "arborist.setupWorktree",
+          "when": "view == arborist.worktreeView && viewItem == worktree",
           "group": "context@2"
         },
         {
-          "command": "gw.cleanWorktree",
-          "when": "view == gw.worktreeView && viewItem == worktree",
+          "command": "arborist.cleanWorktree",
+          "when": "view == arborist.worktreeView && viewItem == worktree",
           "group": "context@3"
         }
       ]
@@ -179,12 +179,12 @@
     "configuration": {
       "title": "Git Arborist",
       "properties": {
-        "gw.binaryPath": {
+        "arborist.binaryPath": {
           "type": "string",
           "default": "",
-          "description": "Path to gw binary (auto-detect if empty)"
+          "description": "Path to arb binary (auto-detect if empty)"
         },
-        "gw.switchBehavior": {
+        "arborist.switchBehavior": {
           "type": "string",
           "enum": [
             "newWindow",
@@ -193,18 +193,18 @@
           "default": "newWindow",
           "description": "Open worktree in new window or replace current"
         },
-        "gw.autoRefreshInterval": {
+        "arborist.autoRefreshInterval": {
           "type": "number",
           "default": 10000,
           "minimum": 1000,
           "description": "Tree view auto-refresh interval in milliseconds"
         },
-        "gw.showStatusBar": {
+        "arborist.showStatusBar": {
           "type": "boolean",
           "default": true,
           "description": "Show current worktree branch in status bar"
         },
-        "gw.dashboardRefreshInterval": {
+        "arborist.dashboardRefreshInterval": {
           "type": "number",
           "default": 5000,
           "minimum": 1000,

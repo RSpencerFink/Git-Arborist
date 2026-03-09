@@ -28,14 +28,14 @@ export interface PluginConfig {
   [key: string]: unknown;
 }
 
-export interface GwConfig {
+export interface ArboristConfig {
   worktree_path: string;
   editor?: string;
   setup: SetupConfig;
   plugins: Record<string, PluginConfig>;
 }
 
-const DEFAULT_CONFIG: GwConfig = {
+const DEFAULT_CONFIG: ArboristConfig = {
   worktree_path: '../.worktrees/{{ branch | sanitize }}',
   setup: {
     copy: [],
@@ -46,11 +46,11 @@ const DEFAULT_CONFIG: GwConfig = {
 };
 
 export function getGlobalConfigPath(): string {
-  return join(homedir(), '.config', 'gw', 'config.toml');
+  return join(homedir(), '.config', 'arborist', 'config.toml');
 }
 
 export function getProjectConfigPath(gitRoot: string): string {
-  return join(gitRoot, '.gw.toml');
+  return join(gitRoot, '.arborist.toml');
 }
 
 function parseToml(content: string): Record<string, unknown> {
@@ -151,7 +151,7 @@ function setNested(obj: Record<string, unknown>, path: string, value: unknown): 
   current[parts[parts.length - 1]] = value;
 }
 
-export function loadConfig(gitRoot: string): GwConfig {
+export function loadConfig(gitRoot: string): ArboristConfig {
   const projectPath = getProjectConfigPath(gitRoot);
   const globalPath = getGlobalConfigPath();
 
@@ -178,10 +178,10 @@ export function loadConfig(gitRoot: string): GwConfig {
 }
 
 function mergeConfigs(
-  defaults: GwConfig,
+  defaults: ArboristConfig,
   global: Record<string, unknown>,
   project: Record<string, unknown>,
-): GwConfig {
+): ArboristConfig {
   return {
     worktree_path:
       (project.worktree_path as string) ??

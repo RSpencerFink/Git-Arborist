@@ -1,10 +1,10 @@
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { findWorktree, getWorktrees } from '../core/worktree.ts';
 import { c } from '../utils/color.ts';
 import { exec } from '../utils/exec.ts';
 import { log } from '../utils/logger.ts';
 
-export async function run(ctx: GwContext, args: string[]): Promise<void> {
+export async function run(ctx: ArboristContext, args: string[]): Promise<void> {
   const dashDash = args.indexOf('--');
   let name: string;
   let cmd: string[];
@@ -16,11 +16,11 @@ export async function run(ctx: GwContext, args: string[]): Promise<void> {
     name = args[0];
     cmd = args.slice(1);
   } else {
-    throw new Error('Usage: gw run <name> -- <command>');
+    throw new Error('Usage: arb run <name> -- <command>');
   }
 
   if (!name || cmd.length === 0) {
-    throw new Error('Usage: gw run <name> -- <command>');
+    throw new Error('Usage: arb run <name> -- <command>');
   }
 
   const worktrees = await getWorktrees(ctx);

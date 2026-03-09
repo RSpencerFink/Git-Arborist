@@ -1,12 +1,12 @@
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { HookRegistry } from './hooks.ts';
-import type { GwPlugin } from './types.ts';
+import type { ArboristPlugin } from './types.ts';
 
-export async function loadPlugins(ctx: GwContext): Promise<HookRegistry> {
+export async function loadPlugins(ctx: ArboristContext): Promise<HookRegistry> {
   const registry = new HookRegistry();
 
   // Load built-in plugins based on config
-  const builtinPlugins: Record<string, () => Promise<GwPlugin>> = {
+  const builtinPlugins: Record<string, () => Promise<ArboristPlugin>> = {
     git: async () => (await import('./builtin/git.ts')).default,
     deps: async () => (await import('./builtin/deps.ts')).default,
     env: async () => (await import('./builtin/env.ts')).default,

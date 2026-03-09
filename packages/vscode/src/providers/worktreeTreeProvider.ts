@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { gw, handleGwError } from "../cli/gwRunner";
+import { arb, handleArboristError } from "../cli/gwRunner";
 import type { WorktreeItem } from "../cli/types";
 import { WorktreeTreeItem } from "./worktreeTreeItem";
 
@@ -26,10 +26,10 @@ export class WorktreeTreeProvider implements vscode.TreeDataProvider<WorktreeTre
 
   async getChildren(): Promise<WorktreeTreeItem[]> {
     try {
-      this.worktrees = await gw.ls();
+      this.worktrees = await arb.ls();
       return this.worktrees.map((wt) => new WorktreeTreeItem(wt));
     } catch (err) {
-      await handleGwError(err);
+      await handleArboristError(err);
       return [];
     }
   }
@@ -41,7 +41,7 @@ export class WorktreeTreeProvider implements vscode.TreeDataProvider<WorktreeTre
   private startAutoRefresh(): void {
     this.stopAutoRefresh();
     const interval = vscode.workspace
-      .getConfiguration("gw")
+      .getConfiguration("arborist")
       .get<number>("autoRefreshInterval", 10000);
     this.refreshTimer = setInterval(() => this.refresh(), interval);
   }

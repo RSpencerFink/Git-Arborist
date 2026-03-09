@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { clearBinaryCache } from "./cli/gwBinary";
-import { gw } from "./cli/gwRunner";
+import { arb } from "./cli/gwRunner";
 import { addWorktree } from "./commands/addWorktree";
 import { pruneWorktrees } from "./commands/pruneWorktrees";
 import { removeWorktree } from "./commands/removeWorktree";
@@ -31,12 +31,12 @@ export function activate(context: vscode.ExtensionContext): void {
   const fileWatcher = new FileWatcher();
 
   // Register tree views
-  const worktreeView = vscode.window.createTreeView("gw.worktreeView", {
+  const worktreeView = vscode.window.createTreeView("arborist.worktreeView", {
     treeDataProvider: worktreeProvider,
     showCollapseAll: false,
   });
 
-  const pluginView = vscode.window.createTreeView("gw.pluginView", {
+  const pluginView = vscode.window.createTreeView("arborist.pluginView", {
     treeDataProvider: pluginProvider,
   });
 
@@ -49,34 +49,34 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // Listen for config changes
   vscode.workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration("gw.binaryPath")) {
+    if (e.affectsConfiguration("arborist.binaryPath")) {
       clearBinaryCache();
       worktreeProvider.refresh();
     }
-    if (e.affectsConfiguration("gw.showStatusBar")) {
+    if (e.affectsConfiguration("arborist.showStatusBar")) {
       statusBar.refresh();
     }
   });
 
   // Register commands
   const commands: Array<[string, (...args: unknown[]) => unknown]> = [
-    ["gw.addWorktree", addWorktree],
-    ["gw.removeWorktree", removeWorktree],
-    ["gw.switchWorktree", switchWorktree],
-    ["gw.switchToMain", switchToMain],
-    ["gw.pruneWorktrees", pruneWorktrees],
-    ["gw.cleanWorktree", cleanWorktree],
-    ["gw.garbageCollect", garbageCollect],
-    ["gw.cloneRepo", cloneRepo],
-    ["gw.initConfig", initConfig],
-    ["gw.runSetup", runSetup],
-    ["gw.runInWorktree", runInWorktree],
-    ["gw.editConfig", editConfig],
-    ["gw.openWorktreeInNewWindow", openWorktreeInNewWindow],
-    ["gw.setupWorktree", runSetup],
-    ["gw.openDashboard", () => DashboardPanel.show()],
+    ["arborist.addWorktree", addWorktree],
+    ["arborist.removeWorktree", removeWorktree],
+    ["arborist.switchWorktree", switchWorktree],
+    ["arborist.switchToMain", switchToMain],
+    ["arborist.pruneWorktrees", pruneWorktrees],
+    ["arborist.cleanWorktree", cleanWorktree],
+    ["arborist.garbageCollect", garbageCollect],
+    ["arborist.cloneRepo", cloneRepo],
+    ["arborist.initConfig", initConfig],
+    ["arborist.runSetup", runSetup],
+    ["arborist.runInWorktree", runInWorktree],
+    ["arborist.editConfig", editConfig],
+    ["arborist.openWorktreeInNewWindow", openWorktreeInNewWindow],
+    ["arborist.setupWorktree", runSetup],
+    ["arborist.openDashboard", () => DashboardPanel.show()],
     [
-      "gw.refreshWorktrees",
+      "arborist.refreshWorktrees",
       () => {
         worktreeProvider.refresh();
         pluginProvider.refresh();
@@ -100,5 +100,5 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 export function deactivate(): void {
-  gw.disposeOutputChannel();
+  arb.disposeOutputChannel();
 }

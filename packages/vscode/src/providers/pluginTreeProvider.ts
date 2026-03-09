@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { gw, handleGwError } from "../cli/gwRunner";
+import { arb, handleArboristError } from "../cli/gwRunner";
 import type { PluginItem } from "../cli/types";
 
 class PluginTreeItem extends vscode.TreeItem {
@@ -32,10 +32,10 @@ export class PluginTreeProvider implements vscode.TreeDataProvider<PluginTreeIte
 
   async getChildren(): Promise<PluginTreeItem[]> {
     try {
-      const plugins = await gw.pluginList();
+      const plugins = await arb.pluginList();
       return plugins.map((p) => new PluginTreeItem(p));
     } catch (err) {
-      await handleGwError(err);
+      await handleArboristError(err);
       return [];
     }
   }

@@ -1,15 +1,15 @@
 import { basename, resolve } from 'node:path';
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { c } from '../utils/color.ts';
 import { execOrThrow } from '../utils/exec.ts';
 import { log } from '../utils/logger.ts';
 
-export async function clone(_ctx: GwContext | null, args: string[]): Promise<void> {
+export async function clone(_ctx: ArboristContext | null, args: string[]): Promise<void> {
   const bare = args.includes('--bare');
   const repo = args.find((a) => !a.startsWith('-'));
 
   if (!repo) {
-    throw new Error('Repository URL required. Usage: gw clone <repo> [--bare]');
+    throw new Error('Repository URL required. Usage: arb clone <repo> [--bare]');
   }
 
   // Derive directory name from repo URL

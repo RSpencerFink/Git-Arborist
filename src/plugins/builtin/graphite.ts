@@ -1,7 +1,7 @@
 import { c } from '../../utils/color.ts';
 import { exec } from '../../utils/exec.ts';
 import { log } from '../../utils/logger.ts';
-import type { GwPlugin } from '../types.ts';
+import type { ArboristPlugin } from '../types.ts';
 
 interface StackEntry {
   branch: string;
@@ -63,7 +63,7 @@ async function getStackForBranch(
   }
 }
 
-const graphitePlugin: GwPlugin = {
+const graphitePlugin: ArboristPlugin = {
   name: 'graphite',
   version: '1.0.0',
 

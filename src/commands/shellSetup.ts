@@ -1,22 +1,22 @@
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { c } from '../utils/color.ts';
 import { log } from '../utils/logger.ts';
 
 const SHELL_CONFIGS: Record<string, { rc: string; line: string }> = {
   zsh: {
     rc: '.zshrc',
-    line: 'eval "$(gw shell-init zsh)"',
+    line: 'eval "$(arb shell-init zsh)"',
   },
   bash: {
     rc: '.bashrc',
-    line: 'eval "$(gw shell-init bash)"',
+    line: 'eval "$(arb shell-init bash)"',
   },
   fish: {
     rc: '.config/fish/config.fish',
-    line: 'gw shell-init fish | source',
+    line: 'arb shell-init fish | source',
   },
 };
 
@@ -40,7 +40,7 @@ export function isShellIntegrationConfigured(): boolean {
   if (!config) return false;
   const rcPath = join(homedir(), config.rc);
   if (!existsSync(rcPath)) return false;
-  return readFileSync(rcPath, 'utf-8').includes('gw shell-init');
+  return readFileSync(rcPath, 'utf-8').includes('arb shell-init');
 }
 
 export function runShellSetup(): boolean {
@@ -51,11 +51,11 @@ export function runShellSetup(): boolean {
 
   if (existsSync(rcPath)) {
     const contents = readFileSync(rcPath, 'utf-8');
-    if (contents.includes('gw shell-init')) return true;
+    if (contents.includes('arb shell-init')) return true;
   }
 
   try {
-    appendFileSync(rcPath, `\n# gw shell integration\n${config.line}\n`);
+    appendFileSync(rcPath, `\n# arb shell integration\n${config.line}\n`);
     log.success(`Added shell integration to ${c.dim(rcPath)}`);
     log.info(`Restart your shell or run: ${c.cyan(`source ~/${config.rc}`)}`);
     return true;
@@ -71,7 +71,7 @@ async function promptAndSetup(): Promise<void> {
   });
 
   if (isCancel(shouldSetup) || !shouldSetup) {
-    log.dim('You can set it up later with: gw shell-setup');
+    log.dim('You can set it up later with: arb shell-setup');
     process.exit(0);
   }
 
@@ -91,9 +91,9 @@ export async function ensureShellIntegration(): Promise<void> {
   await promptAndSetup();
 }
 
-/** For dash: checks GW_CD_FILE env var to confirm wrapper is active. */
+/** For dash: checks ARB_CD_FILE env var to confirm wrapper is active. */
 export async function ensureShellIntegrationActive(): Promise<void> {
-  if (process.env.GW_CD_FILE) return;
+  if (process.env.ARB_CD_FILE) return;
 
   if (isShellIntegrationConfigured()) {
     const config = getShellConfig();
@@ -106,7 +106,7 @@ export async function ensureShellIntegrationActive(): Promise<void> {
   await promptAndSetup();
 }
 
-export async function shellSetup(_ctx: GwContext, _args: string[]): Promise<void> {
+export async function shellSetup(_ctx: ArboristContext, _args: string[]): Promise<void> {
   if (isShellIntegrationConfigured()) {
     const config = getShellConfig();
     const rcPath = config ? join(homedir(), config.rc) : '~/.zshrc';

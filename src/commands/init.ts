@@ -1,11 +1,11 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import type { GwContext } from '../core/context.ts';
+import type { ArboristContext } from '../core/context.ts';
 import { c } from '../utils/color.ts';
 import { log } from '../utils/logger.ts';
 
-const DEFAULT_GW_TOML = `# gw configuration
-# See: https://github.com/gw-cli/gw
+const DEFAULT_ARBORIST_TOML = `# arborist configuration
+# See: https://github.com/git-arborist/git-arborist
 
 # Where to create worktrees (relative to repo root)
 # Available variables: {{ branch }}, {{ branch | sanitize }}
@@ -31,15 +31,15 @@ worktree_path = "../.worktrees/{{ branch | sanitize }}"
 # enabled = true
 `;
 
-export async function init(ctx: GwContext, _args: string[]): Promise<void> {
-  const configPath = join(ctx.gitRoot, '.gw.toml');
+export async function init(ctx: ArboristContext, _args: string[]): Promise<void> {
+  const configPath = join(ctx.gitRoot, '.arborist.toml');
 
   if (existsSync(configPath)) {
-    log.warn(`${c.path('.gw.toml')} already exists in this repository.`);
+    log.warn(`${c.path('.arborist.toml')} already exists in this repository.`);
     return;
   }
 
-  await Bun.write(configPath, DEFAULT_GW_TOML);
-  log.success(`Created ${c.path('.gw.toml')} in repository root`);
+  await Bun.write(configPath, DEFAULT_ARBORIST_TOML);
+  log.success(`Created ${c.path('.arborist.toml')} in repository root`);
   log.dim('  Edit to customize worktree paths, setup hooks, and plugins.');
 }

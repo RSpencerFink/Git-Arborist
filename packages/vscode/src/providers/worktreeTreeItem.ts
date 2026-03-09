@@ -14,7 +14,7 @@ export class WorktreeTreeItem extends vscode.TreeItem {
     this.iconPath = getIcon(worktree);
 
     this.command = {
-      command: "gw.switchWorktree",
+      command: "arborist.switchWorktree",
       title: "Switch to Worktree",
       arguments: [this],
     };
@@ -38,8 +38,8 @@ function buildDescription(wt: WorktreeItem): string {
 
     if (wt.status.ahead > 0 || wt.status.behind > 0) {
       const sync: string[] = [];
-      if (wt.status.ahead > 0) sync.push(`↑${wt.status.ahead}`);
-      if (wt.status.behind > 0) sync.push(`↓${wt.status.behind}`);
+      if (wt.status.ahead > 0) sync.push(`\u2191${wt.status.ahead}`);
+      if (wt.status.behind > 0) sync.push(`\u2193${wt.status.behind}`);
       parts.push(sync.join(" "));
     }
   }

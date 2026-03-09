@@ -11,7 +11,7 @@ export class FileWatcher {
     this.onChangeCallback = callback;
 
     const patterns = [
-      "**/.gw.toml",
+      "**/.arborist.toml",
       "**/.git/worktrees/**",
       "**/.git/refs/heads/**",
     ];

@@ -1,9 +1,9 @@
-import { getDefaultBranch, isMerged } from "../core/branch.ts";
-import type { GwContext } from "../core/context.ts";
-import { pruneWorktrees, removeWorktree } from "../core/git.ts";
-import { getWorktrees } from "../core/worktree.ts";
-import { c } from "../utils/color.ts";
-import { log } from "../utils/logger.ts";
+import { getDefaultBranch, isMerged } from '../core/branch.ts';
+import type { ArboristContext } from '../core/context.ts';
+import { pruneWorktrees, removeWorktree } from '../core/git.ts';
+import { getWorktrees } from '../core/worktree.ts';
+import { c } from '../utils/color.ts';
+import { log } from '../utils/logger.ts';
 
 interface PruneCandidate {
   branch: string;
@@ -17,11 +17,8 @@ interface PruneJsonResult {
   failed?: Array<{ branch: string; path: string; error: string }>;
 }
 
-export async function pruneJson(
-  ctx: GwContext,
-  args: string[],
-): Promise<PruneJsonResult> {
-  const dryRun = args.includes("--dry-run") || args.includes("-n");
+export async function pruneJson(ctx: ArboristContext, args: string[]): Promise<PruneJsonResult> {
+  const dryRun = args.includes('--dry-run') || args.includes('-n');
 
   await pruneWorktrees(ctx.gitRoot);
 
@@ -70,8 +67,8 @@ export async function pruneJson(
   return { removed, failed };
 }
 
-export async function prune(ctx: GwContext, args: string[]): Promise<void> {
-  const dryRun = args.includes("--dry-run") || args.includes("-n");
+export async function prune(ctx: ArboristContext, args: string[]): Promise<void> {
+  const dryRun = args.includes('--dry-run') || args.includes('-n');
 
   // First, prune stale worktree references
   await pruneWorktrees(ctx.gitRoot);
@@ -99,31 +96,25 @@ export async function prune(ctx: GwContext, args: string[]): Promise<void> {
   }
 
   if (candidates.length === 0) {
-    log.success("Nothing to prune. All worktrees are active.");
+    log.success('Nothing to prune. All worktrees are active.');
     return;
   }
 
   for (const candidate of candidates) {
     if (dryRun) {
-      log.info(
-        `Would remove: ${c.branch(candidate.branch)} (${candidate.reason})`,
-      );
+      log.info(`Would remove: ${c.branch(candidate.branch)} (${candidate.reason})`);
       log.dim(`  ${candidate.path}`);
     } else {
       try {
         await removeWorktree(candidate.path, false, ctx.gitRoot);
-        log.success(
-          `Removed ${c.branch(candidate.branch)} (${candidate.reason})`,
-        );
+        log.success(`Removed ${c.branch(candidate.branch)} (${candidate.reason})`);
       } catch (err) {
-        log.warn(
-          `Could not remove ${c.branch(candidate.branch)}: ${(err as Error).message}`,
-        );
+        log.warn(`Could not remove ${c.branch(candidate.branch)}: ${(err as Error).message}`);
       }
     }
   }
 
   if (dryRun) {
-    log.dim(`\nRun ${c.command("gw prune")} without --dry-run to remove.`);
+    log.dim(`\nRun ${c.command('arb prune')} without --dry-run to remove.`);
   }
 }

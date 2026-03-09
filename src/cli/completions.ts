@@ -33,9 +33,9 @@ const COMMANDS = [
   'shell-init',
 ];
 
-const ZSH_COMPLETIONS = `#compdef gw
+const ZSH_COMPLETIONS = `#compdef arb
 
-_gw() {
+_arb() {
   local -a commands
   commands=(
     'add:Create worktree'
@@ -47,7 +47,7 @@ _gw() {
     'prune:Remove merged worktrees'
     'gc:Garbage collection'
     'clean:Reset worktree to clean state'
-    'init:Scaffold .gw.toml'
+    'init:Scaffold .arborist.toml'
     'setup:Run setup hooks'
     'clone:Clone repository'
     'run:Execute command in worktree'
@@ -76,7 +76,7 @@ _gw() {
             '*:branch:_git_branch_names'
           ;;
         rm|go|clean|setup|open|tmux|run)
-          # TODO: complete from gw ls output
+          # TODO: complete from arb ls output
           ;;
         config)
           _values 'subcommand' list get set edit
@@ -92,10 +92,10 @@ _gw() {
   esac
 }
 
-compdef _gw gw
+compdef _arb arb
 `;
 
-const BASH_COMPLETIONS = `_gw() {
+const BASH_COMPLETIONS = `_arb() {
   local cur prev commands
   COMPREPLY=()
   cur="\${COMP_WORDS[COMP_CWORD]}"
@@ -120,33 +120,33 @@ const BASH_COMPLETIONS = `_gw() {
   esac
 }
 
-complete -F _gw gw
+complete -F _arb arb
 `;
 
-const FISH_COMPLETIONS = `# gw fish completions
-complete -c gw -f
+const FISH_COMPLETIONS = `# arb fish completions
+complete -c arb -f
 
-complete -c gw -n '__fish_use_subcommand' -a add -d 'Create worktree'
-complete -c gw -n '__fish_use_subcommand' -a rm -d 'Remove worktree'
-complete -c gw -n '__fish_use_subcommand' -a go -d 'Switch to worktree'
-complete -c gw -n '__fish_use_subcommand' -a ls -d 'List worktrees'
-complete -c gw -n '__fish_use_subcommand' -a main -d 'Switch to main worktree'
-complete -c gw -n '__fish_use_subcommand' -a status -d 'Show status table'
-complete -c gw -n '__fish_use_subcommand' -a prune -d 'Remove merged worktrees'
-complete -c gw -n '__fish_use_subcommand' -a gc -d 'Garbage collection'
-complete -c gw -n '__fish_use_subcommand' -a clean -d 'Reset worktree'
-complete -c gw -n '__fish_use_subcommand' -a init -d 'Scaffold .gw.toml'
-complete -c gw -n '__fish_use_subcommand' -a setup -d 'Run setup hooks'
-complete -c gw -n '__fish_use_subcommand' -a clone -d 'Clone repository'
-complete -c gw -n '__fish_use_subcommand' -a run -d 'Run command in worktree'
-complete -c gw -n '__fish_use_subcommand' -a open -d 'Open in editor'
-complete -c gw -n '__fish_use_subcommand' -a tmux -d 'Open in tmux'
-complete -c gw -n '__fish_use_subcommand' -a config -d 'Manage config'
-complete -c gw -n '__fish_use_subcommand' -a plugin -d 'Manage plugins'
-complete -c gw -n '__fish_use_subcommand' -a completions -d 'Generate completions'
-complete -c gw -n '__fish_use_subcommand' -a shell-init -d 'Shell integration'
+complete -c arb -n '__fish_use_subcommand' -a add -d 'Create worktree'
+complete -c arb -n '__fish_use_subcommand' -a rm -d 'Remove worktree'
+complete -c arb -n '__fish_use_subcommand' -a go -d 'Switch to worktree'
+complete -c arb -n '__fish_use_subcommand' -a ls -d 'List worktrees'
+complete -c arb -n '__fish_use_subcommand' -a main -d 'Switch to main worktree'
+complete -c arb -n '__fish_use_subcommand' -a status -d 'Show status table'
+complete -c arb -n '__fish_use_subcommand' -a prune -d 'Remove merged worktrees'
+complete -c arb -n '__fish_use_subcommand' -a gc -d 'Garbage collection'
+complete -c arb -n '__fish_use_subcommand' -a clean -d 'Reset worktree'
+complete -c arb -n '__fish_use_subcommand' -a init -d 'Scaffold .arborist.toml'
+complete -c arb -n '__fish_use_subcommand' -a setup -d 'Run setup hooks'
+complete -c arb -n '__fish_use_subcommand' -a clone -d 'Clone repository'
+complete -c arb -n '__fish_use_subcommand' -a run -d 'Run command in worktree'
+complete -c arb -n '__fish_use_subcommand' -a open -d 'Open in editor'
+complete -c arb -n '__fish_use_subcommand' -a tmux -d 'Open in tmux'
+complete -c arb -n '__fish_use_subcommand' -a config -d 'Manage config'
+complete -c arb -n '__fish_use_subcommand' -a plugin -d 'Manage plugins'
+complete -c arb -n '__fish_use_subcommand' -a completions -d 'Generate completions'
+complete -c arb -n '__fish_use_subcommand' -a shell-init -d 'Shell integration'
 
-complete -c gw -n '__fish_seen_subcommand_from config' -a 'list get set edit'
-complete -c gw -n '__fish_seen_subcommand_from plugin' -a 'list add remove'
-complete -c gw -n '__fish_seen_subcommand_from completions shell-init' -a 'zsh bash fish'
+complete -c arb -n '__fish_seen_subcommand_from config' -a 'list get set edit'
+complete -c arb -n '__fish_seen_subcommand_from plugin' -a 'list add remove'
+complete -c arb -n '__fish_seen_subcommand_from completions shell-init' -a 'zsh bash fish'
 `;

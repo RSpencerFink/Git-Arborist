@@ -1,21 +1,21 @@
 import { execFile } from "node:child_process";
 import * as vscode from "vscode";
 import {
-  getGwBinaryPath,
+  getArboristBinaryPath,
   getAugmentedEnv,
-  GwBinaryNotFoundError,
+  ArboristBinaryNotFoundError,
 } from "./gwBinary";
 import type {
   AddResult,
   DashWorktree,
-  GwConfig,
+  ArboristConfig,
   PluginItem,
   PruneResult,
   RmResult,
   WhichResult,
   WorktreeItem,
 } from "./types";
-import { isGwError } from "./types";
+import { isArboristError } from "./types";
 
 let outputChannel: vscode.OutputChannel | undefined;
 
@@ -31,14 +31,14 @@ interface RunOptions {
   token?: vscode.CancellationToken;
 }
 
-async function runGw<T>(args: string[], options?: RunOptions): Promise<T> {
-  const binaryPath = await getGwBinaryPath();
+async function runArb<T>(args: string[], options?: RunOptions): Promise<T> {
+  const binaryPath = await getArboristBinaryPath();
   const fullArgs = [...args, "--json"];
   const cwd =
     options?.cwd ?? vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
   const channel = getOutputChannel();
-  channel.appendLine(`$ gw ${args.join(" ")} --json`);
+  channel.appendLine(`$ arb ${args.join(" ")} --json`);
 
   return new Promise<T>((resolve, reject) => {
     const child = execFile(
@@ -56,14 +56,14 @@ async function runGw<T>(args: string[], options?: RunOptions): Promise<T> {
 
         if (error && !stdout) {
           channel.appendLine(`error: ${error.message}`);
-          reject(new Error(`gw ${args[0]} failed: ${error.message}`));
+          reject(new Error(`arb ${args[0]} failed: ${error.message}`));
           return;
         }
 
         try {
           const parsed = JSON.parse(stdout.trim());
-          if (isGwError(parsed)) {
-            channel.appendLine(`gw error: ${parsed.error} (${parsed.code})`);
+          if (isArboristError(parsed)) {
+            channel.appendLine(`arb error: ${parsed.error} (${parsed.code})`);
             reject(new Error(parsed.error));
             return;
           }
@@ -72,7 +72,7 @@ async function runGw<T>(args: string[], options?: RunOptions): Promise<T> {
         } catch {
           channel.appendLine(`parse error: ${stdout.slice(0, 200)}`);
           reject(
-            new Error(`Failed to parse gw output: ${stdout.slice(0, 200)}`),
+            new Error(`Failed to parse arb output: ${stdout.slice(0, 200)}`),
           );
         }
       },
@@ -86,16 +86,16 @@ async function runGw<T>(args: string[], options?: RunOptions): Promise<T> {
   });
 }
 
-async function runGwRaw(
+async function runArbRaw(
   args: string[],
   options?: RunOptions,
 ): Promise<{ stdout: string; exitCode: number }> {
-  const binaryPath = await getGwBinaryPath();
+  const binaryPath = await getArboristBinaryPath();
   const cwd =
     options?.cwd ?? vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
   const channel = getOutputChannel();
-  channel.appendLine(`$ gw ${args.join(" ")}`);
+  channel.appendLine(`$ arb ${args.join(" ")}`);
 
   return new Promise((resolve, reject) => {
     const child = execFile(
@@ -122,25 +122,25 @@ async function runGwRaw(
   });
 }
 
-export const gw = {
+export const arb = {
   ls(options?: RunOptions): Promise<WorktreeItem[]> {
-    return runGw<WorktreeItem[]>(["ls"], options);
+    return runArb<WorktreeItem[]>(["ls"], options);
   },
 
   status(options?: RunOptions): Promise<WorktreeItem[]> {
-    return runGw<WorktreeItem[]>(["status"], options);
+    return runArb<WorktreeItem[]>(["status"], options);
   },
 
   which(options?: RunOptions): Promise<WhichResult> {
-    return runGw<WhichResult>(["which"], options);
+    return runArb<WhichResult>(["which"], options);
   },
 
-  configList(options?: RunOptions): Promise<GwConfig> {
-    return runGw<GwConfig>(["config", "list"], options);
+  configList(options?: RunOptions): Promise<ArboristConfig> {
+    return runArb<ArboristConfig>(["config", "list"], options);
   },
 
   pluginList(options?: RunOptions): Promise<PluginItem[]> {
-    return runGw<PluginItem[]>(["plugin", "list"], options);
+    return runArb<PluginItem[]>(["plugin", "list"], options);
   },
 
   add(
@@ -148,41 +148,41 @@ export const gw = {
     flags?: string[],
     options?: RunOptions,
   ): Promise<AddResult> {
-    return runGw<AddResult>(["add", ...(flags ?? []), branch], options);
+    return runArb<AddResult>(["add", ...(flags ?? []), branch], options);
   },
 
   rm(name: string, flags?: string[], options?: RunOptions): Promise<RmResult> {
-    return runGw<RmResult>(["rm", ...(flags ?? []), name], options);
+    return runArb<RmResult>(["rm", ...(flags ?? []), name], options);
   },
 
   pruneDryRun(options?: RunOptions): Promise<PruneResult> {
-    return runGw<PruneResult>(["prune", "--dry-run"], options);
+    return runArb<PruneResult>(["prune", "--dry-run"], options);
   },
 
   prune(options?: RunOptions): Promise<PruneResult> {
-    return runGw<PruneResult>(["prune"], options);
+    return runArb<PruneResult>(["prune"], options);
   },
 
   dash(flags?: string[], options?: RunOptions): Promise<DashWorktree[]> {
-    return runGw<DashWorktree[]>(["dash", ...(flags ?? [])], options);
+    return runArb<DashWorktree[]>(["dash", ...(flags ?? [])], options);
   },
 
   async init(options?: RunOptions): Promise<void> {
-    await runGwRaw(["init"], options);
+    await runArbRaw(["init"], options);
   },
 
   async setup(name: string, options?: RunOptions): Promise<string> {
-    const result = await runGwRaw(["setup", name], options);
+    const result = await runArbRaw(["setup", name], options);
     return result.stdout;
   },
 
   async gc(options?: RunOptions): Promise<string> {
-    const result = await runGwRaw(["gc"], options);
+    const result = await runArbRaw(["gc"], options);
     return result.stdout;
   },
 
   async clean(name: string, options?: RunOptions): Promise<string> {
-    const result = await runGwRaw(["clean", name], options);
+    const result = await runArbRaw(["clean", name], options);
     return result.stdout;
   },
 
@@ -191,7 +191,7 @@ export const gw = {
     flags?: string[],
     options?: RunOptions,
   ): Promise<string> {
-    const result = await runGwRaw(["clone", ...(flags ?? []), repo], options);
+    const result = await runArbRaw(["clone", ...(flags ?? []), repo], options);
     return result.stdout;
   },
 
@@ -200,7 +200,7 @@ export const gw = {
     cmd: string[],
     options?: RunOptions,
   ): Promise<string> {
-    const result = await runGwRaw(["run", name, "--", ...cmd], options);
+    const result = await runArbRaw(["run", name, "--", ...cmd], options);
     return result.stdout;
   },
 
@@ -210,20 +210,20 @@ export const gw = {
   },
 };
 
-export async function handleGwError(err: unknown): Promise<void> {
-  if (err instanceof GwBinaryNotFoundError) {
+export async function handleArboristError(err: unknown): Promise<void> {
+  if (err instanceof ArboristBinaryNotFoundError) {
     const action = await vscode.window.showErrorMessage(
       err.message,
       "Open Install Instructions",
     );
     if (action === "Open Install Instructions") {
       vscode.env.openExternal(
-        vscode.Uri.parse("https://github.com/gw-cli/gw#installation"),
+        vscode.Uri.parse("https://github.com/git-arborist/git-arborist#installation"),
       );
     }
     return;
   }
   vscode.window.showErrorMessage(
-    `gw: ${err instanceof Error ? err.message : String(err)}`,
+    `arb: ${err instanceof Error ? err.message : String(err)}`,
   );
 }

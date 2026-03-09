@@ -1,8 +1,12 @@
 import { resolve } from 'node:path';
 import { renderTemplate } from '../utils/template.ts';
-import type { GwConfig } from './config.ts';
+import type { ArboristConfig } from './config.ts';
 
-export function resolveWorktreePath(config: GwConfig, gitRoot: string, branch: string): string {
+export function resolveWorktreePath(
+  config: ArboristConfig,
+  gitRoot: string,
+  branch: string,
+): string {
   const rendered = renderTemplate(config.worktree_path, { branch });
   return resolve(gitRoot, rendered);
 }

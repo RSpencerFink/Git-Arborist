@@ -1,9 +1,9 @@
 import { copyFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { log } from '../../utils/logger.ts';
-import type { GwPlugin } from '../types.ts';
+import type { ArboristPlugin } from '../types.ts';
 
-const envPlugin: GwPlugin = {
+const envPlugin: ArboristPlugin = {
   name: 'env',
   version: '1.0.0',
   hooks: {

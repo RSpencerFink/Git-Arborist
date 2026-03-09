@@ -4,7 +4,8 @@
   "description": "Git Worktrees, Finally Simple",
   "type": "module",
   "bin": {
-    "gw": "./src/index.ts"
+    "arb": "./src/index.ts",
+    "arborist": "./src/index.ts"
   },
   "files": [
     "src/",
@@ -20,7 +21,7 @@
     "postinstall": "bun scripts/postinstall.ts",
     "prebuild": "bun scripts/version.ts",
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --compile --outfile gw",
+    "build": "bun build src/index.ts --compile --outfile arb",
     "build:all": "bun scripts/build.ts",
     "pretest": "bun scripts/version.ts",
     "test": "bun test",
