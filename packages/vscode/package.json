@@ -5,6 +5,10 @@
   "version": "0.1.0",
   "publisher": "rspencerfink",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rspencerfink/git-arborist"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },

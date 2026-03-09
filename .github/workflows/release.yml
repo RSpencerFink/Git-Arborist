@@ -150,6 +150,12 @@ jobs:
         with:
           node-version: 20
 
+      - name: Sync version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          cd packages/vscode
+          npm pkg set version="$VERSION"
+
       - name: Install dependencies
         run: cd packages/vscode && npm ci
 
