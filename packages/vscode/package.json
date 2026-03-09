@@ -1,0 +1,230 @@
+{
+  "name": "gw-worktrees",
+  "displayName": "Git Arborist",
+  "description": "Manage git worktrees with gw (git-arborist) directly from VS Code",
+  "version": "0.1.0",
+  "publisher": "gw-cli",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "SCM Providers",
+    "Other"
+  ],
+  "keywords": [
+    "git",
+    "worktree",
+    "worktrees",
+    "gw",
+    "git-arborist"
+  ],
+  "activationEvents": [
+    "workspaceContains:.gw.toml",
+    "workspaceContains:.git"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "gw.addWorktree",
+        "title": "Git Arborist: Add Worktree",
+        "icon": "$(add)"
+      },
+      {
+        "command": "gw.removeWorktree",
+        "title": "Git Arborist: Remove Worktree",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "gw.switchWorktree",
+        "title": "Git Arborist: Switch Worktree",
+        "icon": "$(arrow-swap)"
+      },
+      {
+        "command": "gw.switchToMain",
+        "title": "Git Arborist: Switch to Main Worktree"
+      },
+      {
+        "command": "gw.pruneWorktrees",
+        "title": "Git Arborist: Prune Merged Worktrees",
+        "icon": "$(git-pull-request-closed)"
+      },
+      {
+        "command": "gw.cleanWorktree",
+        "title": "Git Arborist: Clean Worktree"
+      },
+      {
+        "command": "gw.garbageCollect",
+        "title": "Git Arborist: Garbage Collect"
+      },
+      {
+        "command": "gw.cloneRepo",
+        "title": "Git Arborist: Clone Repository"
+      },
+      {
+        "command": "gw.initConfig",
+        "title": "Git Arborist: Initialize Config"
+      },
+      {
+        "command": "gw.runSetup",
+        "title": "Git Arborist: Run Setup Hooks"
+      },
+      {
+        "command": "gw.runInWorktree",
+        "title": "Git Arborist: Run Command in Worktree"
+      },
+      {
+        "command": "gw.openDashboard",
+        "title": "Git Arborist: Open Dashboard",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "gw.editConfig",
+        "title": "Git Arborist: Edit Config"
+      },
+      {
+        "command": "gw.refreshWorktrees",
+        "title": "Git Arborist: Refresh Worktrees",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gw.openWorktreeInNewWindow",
+        "title": "Open in New Window",
+        "icon": "$(window)"
+      },
+      {
+        "command": "gw.setupWorktree",
+        "title": "Run Setup",
+        "icon": "$(tools)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gw-worktrees",
+          "title": "Git Arborist",
+          "icon": "media/icons/trees.svg"
+        }
+      ]
+    },
+    "views": {
+      "gw-worktrees": [
+        {
+          "id": "gw.worktreeView",
+          "name": "Worktrees"
+        },
+        {
+          "id": "gw.pluginView",
+          "name": "Plugins"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "gw.addWorktree",
+          "when": "view == gw.worktreeView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gw.refreshWorktrees",
+          "when": "view == gw.worktreeView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gw.openDashboard",
+          "when": "view == gw.worktreeView",
+          "group": "navigation@3"
+        },
+        {
+          "command": "gw.pruneWorktrees",
+          "when": "view == gw.worktreeView",
+          "group": "navigation@4"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "gw.switchWorktree",
+          "when": "view == gw.worktreeView && viewItem == worktree",
+          "group": "inline@1"
+        },
+        {
+          "command": "gw.openWorktreeInNewWindow",
+          "when": "view == gw.worktreeView && viewItem == worktree",
+          "group": "inline@2"
+        },
+        {
+          "command": "gw.removeWorktree",
+          "when": "view == gw.worktreeView && viewItem == worktree",
+          "group": "inline@3"
+        },
+        {
+          "command": "gw.removeWorktree",
+          "when": "view == gw.worktreeView && viewItem == worktree",
+          "group": "context@1"
+        },
+        {
+          "command": "gw.setupWorktree",
+          "when": "view == gw.worktreeView && viewItem == worktree",
+          "group": "context@2"
+        },
+        {
+          "command": "gw.cleanWorktree",
+          "when": "view == gw.worktreeView && viewItem == worktree",
+          "group": "context@3"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Git Arborist",
+      "properties": {
+        "gw.binaryPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to gw binary (auto-detect if empty)"
+        },
+        "gw.switchBehavior": {
+          "type": "string",
+          "enum": [
+            "newWindow",
+            "replaceWindow"
+          ],
+          "default": "newWindow",
+          "description": "Open worktree in new window or replace current"
+        },
+        "gw.autoRefreshInterval": {
+          "type": "number",
+          "default": 10000,
+          "minimum": 1000,
+          "description": "Tree view auto-refresh interval in milliseconds"
+        },
+        "gw.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show current worktree branch in status bar"
+        },
+        "gw.dashboardRefreshInterval": {
+          "type": "number",
+          "default": 5000,
+          "minimum": 1000,
+          "description": "Dashboard auto-refresh interval in milliseconds"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "package": "vsce package",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.24.0",
+    "vitest": "^2.0.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.7.0"
+  }
+}

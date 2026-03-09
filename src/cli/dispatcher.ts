@@ -7,42 +7,43 @@ import { generateShellInit } from "./shellInit.ts";
 
 interface CommandHandler {
   run: (ctx: GwContext, args: string[]) => Promise<void>;
+  runJson?: (ctx: GwContext, args: string[]) => Promise<unknown>;
   needsContext: boolean;
 }
 
 const commands: Record<string, () => Promise<CommandHandler>> = {
-  add: async () => ({
-    run: (await import("../commands/add.ts")).add,
-    needsContext: true,
-  }),
-  rm: async () => ({
-    run: (await import("../commands/rm.ts")).rm,
-    needsContext: true,
-  }),
+  add: async () => {
+    const mod = await import("../commands/add.ts");
+    return { run: mod.add, runJson: mod.addJson, needsContext: true };
+  },
+  rm: async () => {
+    const mod = await import("../commands/rm.ts");
+    return { run: mod.rm, runJson: mod.rmJson, needsContext: true };
+  },
   go: async () => ({
     run: (await import("../commands/go.ts")).go,
     needsContext: true,
   }),
-  ls: async () => ({
-    run: (await import("../commands/ls.ts")).ls,
-    needsContext: true,
-  }),
+  ls: async () => {
+    const mod = await import("../commands/ls.ts");
+    return { run: mod.ls, runJson: mod.lsJson, needsContext: true };
+  },
   main: async () => ({
     run: (await import("../commands/main.ts")).main,
     needsContext: true,
   }),
-  status: async () => ({
-    run: (await import("../commands/status.ts")).status,
-    needsContext: true,
-  }),
-  dash: async () => ({
-    run: (await import("../commands/dash.ts")).dash,
-    needsContext: true,
-  }),
-  prune: async () => ({
-    run: (await import("../commands/prune.ts")).prune,
-    needsContext: true,
-  }),
+  status: async () => {
+    const mod = await import("../commands/status.ts");
+    return { run: mod.status, runJson: mod.statusJson, needsContext: true };
+  },
+  dash: async () => {
+    const mod = await import("../commands/dash.ts");
+    return { run: mod.dash, runJson: mod.dashJson, needsContext: true };
+  },
+  prune: async () => {
+    const mod = await import("../commands/prune.ts");
+    return { run: mod.prune, runJson: mod.pruneJson, needsContext: true };
+  },
   gc: async () => ({
     run: (await import("../commands/gc.ts")).gc,
     needsContext: true,
@@ -82,24 +83,30 @@ const commands: Record<string, () => Promise<CommandHandler>> = {
     run: (await import("../commands/tmux.ts")).tmux,
     needsContext: true,
   }),
-  config: async () => ({
-    run: (await import("../commands/config.ts")).config,
-    needsContext: true,
-  }),
-  plugin: async () => ({
-    run: (await import("../commands/plugin.ts")).plugin,
-    needsContext: true,
-  }),
-  which: async () => ({
-    run: (await import("../commands/which.ts")).which,
-    needsContext: true,
-  }),
+  config: async () => {
+    const mod = await import("../commands/config.ts");
+    return { run: mod.config, runJson: mod.configJson, needsContext: true };
+  },
+  plugin: async () => {
+    const mod = await import("../commands/plugin.ts");
+    return { run: mod.plugin, runJson: mod.pluginJson, needsContext: true };
+  },
+  which: async () => {
+    const mod = await import("../commands/which.ts");
+    return { run: mod.which, runJson: mod.whichJson, needsContext: true };
+  },
 };
 
 export async function dispatch(argv: string[]): Promise<void> {
   const args = argv.slice(2); // Skip 'bun' and script path
-  const command = args[0];
-  const commandArgs = args.slice(1);
+  const jsonIndex = args.indexOf("--json");
+  const jsonMode = jsonIndex !== -1;
+  const filteredArgs = jsonMode
+    ? [...args.slice(0, jsonIndex), ...args.slice(jsonIndex + 1)]
+    : args;
+
+  const command = filteredArgs[0];
+  const commandArgs = filteredArgs.slice(1);
 
   // Handle top-level flags
   if (!command || command === "--help" || command === "-h") {
@@ -108,6 +115,11 @@ export async function dispatch(argv: string[]): Promise<void> {
   }
 
   if (command === "--version" || command === "-v") {
+    if (jsonMode) {
+      const { VERSION } = await import("../version.ts");
+      console.log(JSON.stringify({ version: VERSION }));
+      return;
+    }
     printVersion();
     return;
   }
@@ -138,6 +150,15 @@ export async function dispatch(argv: string[]): Promise<void> {
   // Look up command handler
   const loader = commands[command];
   if (!loader) {
+    if (jsonMode) {
+      console.log(
+        JSON.stringify({
+          error: `Unknown command: ${command}`,
+          code: "UNKNOWN_COMMAND",
+        }),
+      );
+      process.exit(1);
+    }
     log.error(`Unknown command: ${command}`);
     log.dim("Run gw --help to see available commands.");
     process.exit(1);
@@ -160,6 +181,31 @@ export async function dispatch(argv: string[]): Promise<void> {
       },
       cwd: process.cwd(),
     };
+  }
+
+  if (jsonMode) {
+    if (!handler.runJson) {
+      console.log(
+        JSON.stringify({
+          error: `Command '${command}' does not support --json`,
+          code: "NO_JSON",
+        }),
+      );
+      process.exit(1);
+    }
+    try {
+      const result = await handler.runJson(ctx, commandArgs);
+      console.log(JSON.stringify(result));
+    } catch (err) {
+      console.log(
+        JSON.stringify({
+          error: (err as Error).message,
+          code: "COMMAND_ERROR",
+        }),
+      );
+      process.exit(1);
+    }
+    return;
   }
 
   await handler.run(ctx, commandArgs);

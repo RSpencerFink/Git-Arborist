@@ -10,3 +10,8 @@ dist/
 
 # Auto-generated
 src/version.ts
+
+# VS Code extension
+packages/vscode/dist/
+packages/vscode/node_modules/
+packages/vscode/*.vsix

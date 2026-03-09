@@ -68,6 +68,10 @@ export function findWorktree(
   worktrees: WorktreeInfo[],
   nameOrBranch: string,
 ): WorktreeInfo | undefined {
+  // Exact path match
+  const exactPath = worktrees.find((wt) => wt.path === nameOrBranch);
+  if (exactPath) return exactPath;
+
   // Exact branch match
   const exactBranch = worktrees.find((wt) => wt.branch === nameOrBranch);
   if (exactBranch) return exactBranch;
